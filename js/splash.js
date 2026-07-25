@@ -1,6 +1,6 @@
 //========================
-// Senda Orion Splash Engine
-// 画面全体に固定し、約6秒でHomeへ移る
+// Senda Olive Splash Engine
+// 画面全体に固定し、約4.8秒でHomeへ移る
 //========================
 
 (function () {
@@ -41,12 +41,12 @@
         }, 760);
     }
 
-    finishTimer = setTimeout(finishSplash, 6000);
+    finishTimer = setTimeout(finishSplash, 4800);
     skipButton?.addEventListener("click", function (event) {
         event.stopPropagation();
         finishSplash();
     });
     splash.addEventListener("pointerdown", finishSplash);
 
-    setTimeout(finishSplash, 9000);
+    setTimeout(finishSplash, 7200);
 })();

@@ -7,14 +7,14 @@
     <title>Senda</title>
     <meta name="apple-mobile-web-app-title" content="Senda">
     <meta name="application-name" content="Senda">
-    <meta name="theme-color" content="#17231d">
+    <meta name="theme-color" content="#10170f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="./manifest.json?v=3">
-    <link rel="apple-touch-icon" href="./apple-touch-icon-v3.png?v=3">
-    <link rel="apple-touch-icon-precomposed" href="./apple-touch-icon-v3.png?v=3">
-    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon-64-v3.png?v=3">
-    <link rel="stylesheet" href="style.css?v=18">
+    <link rel="manifest" href="./manifest.json?v=4">
+    <link rel="apple-touch-icon" href="./assets/icon/apple-touch-icon.png?v=4">
+    <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
+    <link rel="stylesheet" href="style.css?v=19">
 </head>
 
 <body class="splash-active">
@@ -23,30 +23,13 @@
     <div class="splash-ambient" aria-hidden="true"></div>
 
     <div class="splash-content">
-        <svg class="splash-orion" viewBox="0 0 320 330" role="img" aria-label="順番に灯るオリオン座">
-            <g class="orion-lines" aria-hidden="true">
-                <line x1="82" y1="60" x2="104" y2="155"></line>
-                <line x1="230" y1="78" x2="215" y2="158"></line>
-                <line x1="82" y1="60" x2="230" y2="78"></line>
-                <line x1="104" y1="155" x2="160" y2="163"></line>
-                <line x1="160" y1="163" x2="215" y2="158"></line>
-                <line x1="104" y1="155" x2="88" y2="272"></line>
-                <line x1="215" y1="158" x2="236" y2="278"></line>
-            </g>
-
-            <g class="orion-stars" aria-hidden="true">
-                <circle class="splash-star star-1 warm" cx="82" cy="60" r="5.5"></circle>
-                <circle class="splash-star star-2" cx="230" cy="78" r="4.5"></circle>
-                <circle class="splash-star star-3 belt" cx="104" cy="155" r="4.5"></circle>
-                <circle class="splash-star star-4 belt" cx="160" cy="163" r="5"></circle>
-                <circle class="splash-star star-5 belt" cx="215" cy="158" r="4.5"></circle>
-                <circle class="splash-star star-6" cx="88" cy="272" r="4.5"></circle>
-                <circle class="splash-star star-7 bright" cx="236" cy="278" r="5.5"></circle>
-            </g>
-        </svg>
+        <div class="splash-emblem" role="img" aria-label="真鍮のオリーブの枝">
+            <img src="apple-touch-icon.png" alt="">
+            <span class="splash-emblem-ring" aria-hidden="true"></span>
+        </div>
 
         <div class="splash-brand" aria-hidden="true">
-            <div class="splash-three-stars"><span></span><span></span><span></span></div>
+            <div class="splash-brass-rule"><span></span></div>
             <div class="splash-title">SENDA</div>
             <div class="splash-subtitle">A gentle path back to yourself.</div>
         </div>
@@ -260,7 +243,7 @@
                 <div class="settings-label">VERSION</div>
                 <strong>Senda v1.4 Settings</strong>
             </div>
-            <div class="orion-mini" aria-hidden="true">✦ ✦ ✦</div>
+            <div class="orion-mini" aria-hidden="true">— OLIVE &amp; BRASS —</div>
         </section>
 
         <div id="settingsSavedMessage" class="settings-saved-message" role="status" aria-live="polite"></div>
@@ -289,7 +272,7 @@
     <button class="nav-button" type="button" data-page-target="settings">Settings</button>
 </nav>
 
-<script src="js/splash.js?v=2"></script>
+<script src="js/splash.js?v=3"></script>
 <script src="js/background.js?v=1"></script>
 <script src="js/companion-dialogues.js?v=9"></script>
 <script src="js/message.js?v=12"></script>
