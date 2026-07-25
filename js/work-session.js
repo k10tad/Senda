@@ -29,6 +29,20 @@ const workStartButton = document.getElementById("workStart");
 const workBreakButton = document.getElementById("workBreak");
 const workEndButton = document.getElementById("workEnd");
 
+function setSessionCompanionImage(state) {
+    const harry = document.getElementById("harry");
+    if (!harry) return;
+
+    const images = window.SENDA_IMAGES || {};
+    const imageByState = {
+        work: images.work || "assets/companion-work.jpg",
+        break: images.normal || "assets/companion-welcome.jpg",
+        idle: images.normal || "assets/companion-welcome.jpg"
+    };
+
+    harry.src = imageByState[state] || imageByState.idle;
+}
+
 function getTodayKey() {
     const now = new Date();
     const year = now.getFullYear();
@@ -177,6 +191,7 @@ function beginWorkSession() {
     sessionState = "work";
     sessionLastTick = Date.now();
 
+    setSessionCompanionImage("work");
     startWorkSoundsSafely();
 
     if (message) {
@@ -200,6 +215,7 @@ function beginBreakSession() {
     sessionState = "break";
     sessionLastTick = Date.now();
 
+    setSessionCompanionImage("break");
     startBreakSoundsSafely();
 
     if (message) {
@@ -223,6 +239,7 @@ function endWorkSession() {
 
     sessionState = "idle";
     sessionLastTick = Date.now();
+    setSessionCompanionImage("idle");
     saveSessionState();
     updateSessionDisplay();
 
@@ -240,9 +257,11 @@ function restoreWorkSession() {
     updateSessionDisplay();
 
     if (sessionState === "work") {
+        setSessionCompanionImage("work");
         startWorkSoundsSafely();
         startSessionInterval();
     } else if (sessionState === "break") {
+        setSessionCompanionImage("break");
         startBreakSoundsSafely();
         startSessionInterval();
     }
@@ -271,5 +290,8 @@ document.addEventListener("visibilitychange", function () {
         applyElapsedTime();
         saveSessionState();
         updateSessionDisplay();
+        if (sessionState !== "idle") {
+            setSessionCompanionImage(sessionState);
+        }
     }
 });
