@@ -69,8 +69,16 @@ async function loadWeather() {
         return;
     }
 
-    const url =
-        "https://api.open-meteo.com/v1/forecast?latitude=34.6937&longitude=135.5023&current=temperature_2m,weather_code,surface_pressure,relative_humidity_2m";
+    const location = typeof getSendaWeatherLocation === "function"
+        ? getSendaWeatherLocation()
+        : { latitude: 34.6937, longitude: 135.5023 };
+    const parameters = new URLSearchParams({
+        latitude: String(location.latitude),
+        longitude: String(location.longitude),
+        current: "temperature_2m,weather_code,surface_pressure,relative_humidity_2m",
+        timezone: "Asia/Tokyo"
+    });
+    const url = `https://api.open-meteo.com/v1/forecast?${parameters}`;
 
     try {
         const response = await fetch(url);

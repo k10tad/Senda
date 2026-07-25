@@ -10,6 +10,7 @@ function showSendaPage(pageName, options = {}) {
     const targetPage = document.querySelector(
         `.app-page[data-page="${pageName}"]`
     );
+    
 
     if (!targetPage) return;
 

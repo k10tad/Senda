@@ -138,8 +138,8 @@ function wakeFromAlarm() {
     if (typeof stopSleepRecord === "function" && sleepStartTime) {
         stopSleepRecord();
     } else {
-        const normalImage = window.SENDA_IMAGES?.normal || "assets/companion-welcome.jpg";
-        setAlarmImage(normalImage);
+        const morningImage = window.SENDA_IMAGES?.morning || "assets/companion-morning.jpg";
+        setAlarmImage(morningImage);
         setAlarmMessage("……おはよう。");
     }
     updateAlarmPreview();

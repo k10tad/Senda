@@ -178,14 +178,11 @@ function beginWorkSession() {
     sessionLastTick = Date.now();
 
     startWorkSoundsSafely();
-    if (typeof setHomeImage === "function") {
-        setHomeImage(window.SENDA_IMAGES?.work || "assets/companion-work.jpg");
-    }
 
     if (message) {
         const list = typeof getMessageList === "function"
             ? getMessageList(currentWeatherCode, currentPressure)
-            : ["始めるぞ。"];
+            : ["ほな、やろか。俺も付き合うで。"];
         message.textContent = typeof randomMessage === "function"
             ? randomMessage(list)
             : list[0];
@@ -204,14 +201,11 @@ function beginBreakSession() {
     sessionLastTick = Date.now();
 
     startBreakSoundsSafely();
-    if (typeof setHomeImage === "function") {
-        setHomeImage(window.SENDA_IMAGES?.normal || "assets/companion-welcome.jpg");
-    }
 
     if (message) {
         const list = typeof breakMessages !== "undefined"
             ? breakMessages
-            : ["少し休め。"];
+            : ["休憩やで。手ぇ止めへんなら没収するからな。"];
         message.textContent = typeof randomMessage === "function"
             ? randomMessage(list)
             : list[0];
@@ -226,9 +220,6 @@ function endWorkSession() {
     applyElapsedTime();
     stopSessionInterval();
     stopSessionSoundsSafely();
-    if (typeof setHomeImage === "function") {
-        setHomeImage(window.SENDA_IMAGES?.normal || "assets/companion-welcome.jpg");
-    }
 
     sessionState = "idle";
     sessionLastTick = Date.now();
@@ -238,7 +229,7 @@ function endWorkSession() {
     if (message) {
         const workText = formatSessionTime(workSeconds);
         const breakText = formatSessionTime(breakSeconds);
-        message.textContent = `今日は作業 ${workText}、休憩 ${breakText} だ。よく戻ってきたな。`;
+        message.textContent = `作業 ${workText}、休憩 ${breakText}。ようやったな、レイ。あとはちょっとこっちで休み。`;
     }
 }
 
@@ -249,15 +240,9 @@ function restoreWorkSession() {
     updateSessionDisplay();
 
     if (sessionState === "work") {
-        if (typeof setHomeImage === "function") {
-            setHomeImage(window.SENDA_IMAGES?.work || "assets/companion-work.jpg");
-        }
         startWorkSoundsSafely();
         startSessionInterval();
     } else if (sessionState === "break") {
-        if (typeof setHomeImage === "function") {
-            setHomeImage(window.SENDA_IMAGES?.normal || "assets/companion-welcome.jpg");
-        }
         startBreakSoundsSafely();
         startSessionInterval();
     }

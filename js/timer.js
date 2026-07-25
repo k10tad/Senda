@@ -196,7 +196,7 @@ pauseButton.addEventListener("click", function () {
         stopIdleMessages();
     }
 
-    message.textContent = "止めた。だが戻ってこい。";
+    message.textContent = "止めたで。逃げるんは五分だけな。";
 });
 
 resetButton.addEventListener("click", function () {
@@ -214,7 +214,7 @@ resetButton.addEventListener("click", function () {
 
     updateTimer();
 
-    message.textContent = "仕切り直しだ、レイ。";
+    message.textContent = "仕切り直そか、レイ。失敗ちゃう、調整や。";
 });
 
 summaryButton.addEventListener("click", function () {

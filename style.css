@@ -16,6 +16,7 @@ body {
     animation: roomLight 6s infinite alternate;
 }
 
+
 .container {
     display: flex;
     min-height: 100vh;
@@ -1458,7 +1459,8 @@ body.alarm-mode::before {
     font-size: 14px;
 }
 
-.settings-field input[type="text"] {
+.settings-field input[type="text"],
+.settings-field select {
     width: 100%;
     box-sizing: border-box;
     padding: 13px 15px;
@@ -1470,34 +1472,34 @@ body.alarm-mode::before {
     font: inherit;
 }
 
-.settings-field input[type="text"]:focus {
+.settings-field input[type="text"]:focus,
+.settings-field select:focus {
     border-color: rgba(226, 210, 158, 0.56);
     box-shadow: 0 0 0 3px rgba(226, 210, 158, 0.08);
 }
 
-.volume-setting {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 9px 14px;
-    align-items: center;
-    margin-top: 17px;
+.settings-field select {
+    appearance: none;
+    cursor: pointer;
+    background-image:
+        linear-gradient(45deg, transparent 50%, rgba(245, 238, 213, 0.72) 50%),
+        linear-gradient(135deg, rgba(245, 238, 213, 0.72) 50%, transparent 50%);
+    background-position:
+        calc(100% - 19px) calc(50% - 2px),
+        calc(100% - 14px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
 }
 
-.volume-setting:first-of-type {
-    margin-top: 0;
+.settings-field select option {
+    color: #111722;
 }
 
-.volume-setting output {
-    min-width: 42px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    opacity: 0.74;
-}
-
-.volume-setting input[type="range"] {
-    grid-column: 1 / -1;
-    width: 100%;
-    accent-color: #dacb9c;
+.settings-note {
+    margin: 12px 0 0;
+    color: rgba(218, 230, 250, 0.62);
+    font-size: 12px;
+    line-height: 1.7;
 }
 
 .frequency-options {
@@ -2513,11 +2515,6 @@ body.sleep-mode .moonlight-sky {
 
 body.alarm-mode {
     filter: none !important;
-}
-
-#sleepVolume:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

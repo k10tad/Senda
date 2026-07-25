@@ -5,7 +5,8 @@
 
 let audioMode = "idle"; // idle / work / break / sleep / alarm
 
-const SENDA_AUDIO_SETTINGS_KEY = "sendaSettings";
+const SENDA_FIXED_BGM_VOLUME = 0.18;
+const SENDA_FIXED_LIVING_VOLUME = 0.15;
 const SENDA_FIXED_SLEEP_VOLUME = 0.78;
 const SENDA_FIXED_SLEEP_DEEP_BREATH_VOLUME = 0.045;
 
@@ -15,10 +16,11 @@ const sendaAudio = {
     clock: new Audio("sound/clock.mp3"),
     pen: new Audio("sound/pen.mp3"),
     page: new Audio("sound/page.mp3"),
+    gear: new Audio("sound/gear.mp3"),
     breath: new Audio("sound/breath_idle.mp3"),
     throat: new Audio("sound/throat.mp3"),
     step: new Audio("sound/step.mp3"),
-    sleepBreath: new Audio("sound/breath_idle.mp3"),
+    sleepBreath: new Audio("sound/sleep-breath.mp3"),
     alarm: new Audio("sound/alarm.mp3")
 };
 
@@ -36,36 +38,25 @@ let audioUnlocked = false;
 let desiredAudioMode = "idle";
 let deskTimer = null;
 let humanTimer = null;
+let gearTimer = null;
 let sleepDeepBreathTimer = null;
 let throatStopTimer = null;
 let lastLivingSound = null;
-
-function readAudioSettings() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(SENDA_AUDIO_SETTINGS_KEY));
-        return {
-            bgmVolume: Number(saved?.bgmVolume ?? 18),
-            livingVolume: Number(saved?.livingVolume ?? 15)
-        };
-    } catch (_) {
-        return { bgmVolume: 18, livingVolume: 15 };
-    }
-}
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, Number(value) || 0));
 }
 
 function applySendaAudioSettings() {
-    const settings = readAudioSettings();
-    const bgm = clamp01(settings.bgmVolume / 100);
-    const living = clamp01(settings.livingVolume / 100);
+    const bgm = SENDA_FIXED_BGM_VOLUME;
+    const living = SENDA_FIXED_LIVING_VOLUME;
 
     sendaAudio.workBgm.volume = bgm;
     sendaAudio.breakBgm.volume = bgm * 0.84;
     sendaAudio.clock.volume = living * 0.74;
     sendaAudio.pen.volume = living;
     sendaAudio.page.volume = living * 1.12;
+    sendaAudio.gear.volume = living * 0.86;
     sendaAudio.throat.volume = living * 0.74;
     sendaAudio.step.volume = living * 0.92;
 
@@ -106,10 +97,12 @@ function replay(audio) {
 function clearAudioTimers() {
     clearTimeout(deskTimer);
     clearTimeout(humanTimer);
+    clearTimeout(gearTimer);
     clearTimeout(sleepDeepBreathTimer);
     clearTimeout(throatStopTimer);
     deskTimer = null;
     humanTimer = null;
+    gearTimer = null;
     sleepDeepBreathTimer = null;
     throatStopTimer = null;
 }
@@ -172,6 +165,17 @@ function scheduleHumanSound() {
     }, randomBetween(55000, 140000));
 }
 
+function scheduleGearSound() {
+    clearTimeout(gearTimer);
+    if (audioMode !== "work") return;
+
+    gearTimer = setTimeout(function () {
+        if (audioMode !== "work") return;
+        replay(sendaAudio.gear);
+        scheduleGearSound();
+    }, randomBetween(90000, 240000));
+}
+
 function scheduleSleepDeepBreath() {
     clearTimeout(sleepDeepBreathTimer);
     if (audioMode !== "sleep") return;
@@ -196,6 +200,7 @@ function setMode(nextMode) {
         safePlay(sendaAudio.clock);
         scheduleDeskSound();
         scheduleHumanSound();
+        scheduleGearSound();
     } else if (nextMode === "break") {
         safePlay(sendaAudio.breakBgm);
     } else if (nextMode === "sleep") {
@@ -278,10 +283,3 @@ function playPageStepSound() {
     applySendaAudioSettings();
     replay(sendaAudio.step);
 }
-
-// 最初のユーザー操作で音声を解錠する。
-document.addEventListener("pointerdown", unlockAudio, { once: true, passive: true });
-document.addEventListener("touchend", unlockAudio, { once: true, passive: true });
-document.addEventListener("keydown", unlockAudio, { once: true });
-
-applySendaAudioSettings();

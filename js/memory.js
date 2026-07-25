@@ -55,7 +55,7 @@ function addMemory() {
     memoryInput.value = "";
 
     if (message) {
-        message.textContent = "覚えた。忘れはしない。";
+        message.textContent = "覚えたで。こういうん、案外忘れへんねん。";
     }
 }
 
@@ -67,7 +67,7 @@ function getMemoryMessage() {
     const memory =
         harryMemories[Math.floor(Math.random() * harryMemories.length)];
 
-    return "そういえば、" + memory + "。覚えている。";
+    return "そういや、" + memory + "。ちゃんと覚えとるで。";
 }
 
 if (addMemoryButton) {

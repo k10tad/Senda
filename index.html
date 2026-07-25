@@ -1,12 +1,4 @@
 
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -220,7 +212,7 @@
             <div class="orion-mark" aria-hidden="true"><span></span><span></span><span></span></div>
             <div class="page-kicker">SENDA</div>
             <h1>Settings</h1>
-            <p>この部屋の呼び方と音を、静かに整える。</p>
+            <p>この部屋の呼び方と、空模様の観測地点を整える。</p>
         </header>
 
         <section class="settings-panel" aria-labelledby="profileSettingsTitle">
@@ -235,29 +227,19 @@
             </label>
         </section>
 
-        <section class="settings-panel" aria-labelledby="soundSettingsTitle">
+        <section class="settings-panel" aria-labelledby="weatherSettingsTitle">
             <div class="settings-section-heading">
-                <div class="settings-label">SOUND</div>
-                <h2 id="soundSettingsTitle">音量</h2>
+                <div class="settings-label">WEATHER</div>
+                <h2 id="weatherSettingsTitle">天気・気圧の地域</h2>
             </div>
 
-            <label class="volume-setting" for="bgmVolume">
-                <span>通常BGM</span>
-                <output id="bgmVolumeValue">18%</output>
-                <input id="bgmVolume" type="range" min="0" max="100" step="1" value="18">
+            <label class="settings-field" for="weatherPrefecture">
+                <span>観測する都道府県</span>
+                <select id="weatherPrefecture" aria-describedby="weatherLocationNote"></select>
             </label>
-
-            <label class="volume-setting" for="livingVolume">
-                <span>生活音</span>
-                <output id="livingVolumeValue">15%</output>
-                <input id="livingVolume" type="range" min="0" max="100" step="1" value="15">
-            </label>
-
-            <label class="volume-setting" for="sleepVolume">
-                <span>睡眠中の寝息</span>
-                <output id="sleepVolumeValue">20%</output>
-                <input id="sleepVolume" type="range" min="0" max="100" step="1" value="20">
-            </label>
+            <p id="weatherLocationNote" class="settings-note">
+                天気・気圧は選択地域の代表地点から取得します。ホームの表記はMADRIDのままです。
+            </p>
         </section>
 
         <section class="settings-panel" aria-labelledby="voiceSettingsTitle">
@@ -311,15 +293,15 @@
 <script src="js/background.js?v=1"></script>
 <script src="js/companion-dialogues.js?v=9"></script>
 <script src="js/message.js?v=12"></script>
-<script src="js/sound.js?v=16"></script>
-<script src="js/settings.js?v=1"></script>
+<script src="js/sound.js?v=17"></script>
+<script src="js/settings.js?v=2"></script>
 <script src="js/work-session.js?v=3"></script>
 <script src="js/tasks.js"></script>
 <script src="js/alarm.js?v=4"></script>
 <script src="js/sleep.js?v=9"></script>
 <script src="js/mood.js?v=3"></script>
 <script src="js/memory.js"></script>
-<script src="js/weather.js?v=2"></script>
+<script src="js/weather.js?v=3"></script>
 <script src="js/clock.js"></script>
 <script src="js/navigation.js?v=2"></script>
 <script src="js/companion-engine.js?v=5"></script>

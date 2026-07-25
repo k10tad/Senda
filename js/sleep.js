@@ -180,9 +180,9 @@ function getSleepComment(recordText) {
     const totalMinutes = hours * 60 + minutes;
     const name = getSendaName();
 
-    if (totalMinutes < 240) return `短いな。今日は無理をするな、${name}。`;
-    if (totalMinutes < 360) return "少し短い。起きたなら、まず水を飲め。";
-    if (totalMinutes < 480) return "悪くない睡眠だ。よく戻ってきた。";
+    if (totalMinutes < 240) return `今日あんま寝てへんやん。無理したらあかんよ、${name}。`;
+    if (totalMinutes < 360) return "ちゃんと寝たん？まあ起きたんなら水飲もか。";
+    if (totalMinutes < 480) return "今日は上出来やな、よう寝た。おいで、おはようのハグさせてや。";
     return "よく眠れたな。今日は少し身体が軽いはずだ。";
 }
 
@@ -201,8 +201,8 @@ function stopSleepRecord() {
     if (typeof stopSleepBgm === "function") stopSleepBgm();
     document.body.classList.remove("sleep-mode", "alarm-mode");
 
-    setHomeImage(window.SENDA_IMAGES.normal);
-    setSleepImage(window.SENDA_IMAGES.bedtime);
+    setHomeImage(window.SENDA_IMAGES.morning);
+    setSleepImage(window.SENDA_IMAGES.morning);
     updateSleepButtons(false);
 
     if (sleepTimer) sleepTimer.textContent = recordText;
