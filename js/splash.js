@@ -11,7 +11,7 @@
         const height = window.visualViewport?.height || window.innerHeight;
         document.documentElement.style.setProperty("--senda-viewport-height", `${height}px`);
     }
-
+　
     updateViewportHeight();
     window.scrollTo(0, 0);
     window.addEventListener("resize", updateViewportHeight, { passive: true });
