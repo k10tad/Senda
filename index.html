@@ -1,0 +1,330 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senda</title>
+    <meta name="apple-mobile-web-app-title" content="Senda">
+    <meta name="application-name" content="Senda">
+    <meta name="theme-color" content="#17231d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="./manifest.json?v=3">
+    <link rel="apple-touch-icon" href="./apple-touch-icon-v3.png?v=3">
+    <link rel="apple-touch-icon-precomposed" href="./apple-touch-icon-v3.png?v=3">
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon-64-v3.png?v=3">
+    <link rel="stylesheet" href="style.css?v=18">
+</head>
+
+<body class="splash-active">
+
+<div id="sendaSplash" class="senda-splash" role="dialog" aria-label="Sendaを起動しています" aria-modal="true">
+    <div class="splash-ambient" aria-hidden="true"></div>
+
+    <div class="splash-content">
+        <svg class="splash-orion" viewBox="0 0 320 330" role="img" aria-label="順番に灯るオリオン座">
+            <g class="orion-lines" aria-hidden="true">
+                <line x1="82" y1="60" x2="104" y2="155"></line>
+                <line x1="230" y1="78" x2="215" y2="158"></line>
+                <line x1="82" y1="60" x2="230" y2="78"></line>
+                <line x1="104" y1="155" x2="160" y2="163"></line>
+                <line x1="160" y1="163" x2="215" y2="158"></line>
+                <line x1="104" y1="155" x2="88" y2="272"></line>
+                <line x1="215" y1="158" x2="236" y2="278"></line>
+            </g>
+
+            <g class="orion-stars" aria-hidden="true">
+                <circle class="splash-star star-1 warm" cx="82" cy="60" r="5.5"></circle>
+                <circle class="splash-star star-2" cx="230" cy="78" r="4.5"></circle>
+                <circle class="splash-star star-3 belt" cx="104" cy="155" r="4.5"></circle>
+                <circle class="splash-star star-4 belt" cx="160" cy="163" r="5"></circle>
+                <circle class="splash-star star-5 belt" cx="215" cy="158" r="4.5"></circle>
+                <circle class="splash-star star-6" cx="88" cy="272" r="4.5"></circle>
+                <circle class="splash-star star-7 bright" cx="236" cy="278" r="5.5"></circle>
+            </g>
+        </svg>
+
+        <div class="splash-brand" aria-hidden="true">
+            <div class="splash-three-stars"><span></span><span></span><span></span></div>
+            <div class="splash-title">SENDA</div>
+            <div class="splash-subtitle">A gentle path back to yourself.</div>
+        </div>
+    </div>
+
+    <button id="skipSplash" class="skip-splash" type="button" aria-label="起動画面をスキップ">Skip</button>
+</div>
+
+<div class="moonlight-sky" aria-hidden="true">
+    <div class="moon-glow"></div>
+    <div id="starField" class="star-field"></div>
+    <div id="homeOrion" class="home-orion"></div>
+    <div class="weather-veil"></div>
+</div>
+
+<main id="appPages">
+<section class="app-page active" id="homePage" data-page="home">
+    <div class="senda-home">
+        <section class="senda-presence" aria-label="Harry">
+            <img src="assets/companion-welcome.jpg" id="harry" alt="Harry">
+            <div id="message">……来たか。</div>
+            <button id="callHarry" class="companion-call-button" type="button">Harry</button>
+
+            <div id="companionReplyChoices" class="companion-reply-choices" hidden aria-label="ハリーへの返事">
+                <button type="button" data-companion-reply="tired">少し疲れた</button>
+                <button type="button" data-companion-reply="break">少し休む</button>
+                <button type="button" data-companion-reply="justCalled">呼んだだけ</button>
+            </div>
+        </section>
+
+        <section class="senda-dashboard">
+            <div class="orion-mark" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </div>
+
+            <h1>Senda</h1>
+
+            <div class="clock-card">
+                <div class="line"></div>
+                <div id="city">Madrid</div>
+                <div id="clock"></div>
+                <div id="date"></div>
+                <div class="line"></div>
+            </div>
+
+            <div id="weather-card" class="weather-card">
+                <div id="weather-icon">☁</div>
+                <div id="temperature">--℃</div>
+                <div id="pressure">---- hPa</div>
+                <div id="pressure-level">気圧：取得中</div>
+                <div id="weather-comment">夜空を見ながら、少し待て。</div>
+                <div id="humidity">湿度 --%</div>
+            </div>
+
+            <section class="session-card" aria-labelledby="sessionTitle">
+                <div class="session-heading">
+                    <div>
+                        <div class="session-kicker">WORK SESSION</div>
+                        <h2 id="sessionTitle">自分のペースで進める</h2>
+                    </div>
+                    <div id="sessionStatus" class="session-status" data-state="idle">待機中</div>
+                </div>
+
+                <div class="session-times">
+                    <div class="session-time-block">
+                        <span>作業時間</span>
+                        <strong id="workTime">00:00:00</strong>
+                    </div>
+
+                    <div class="session-time-block">
+                        <span>休憩時間</span>
+                        <strong id="breakTime">00:00:00</strong>
+                    </div>
+                </div>
+
+                <div class="session-buttons">
+                    <button id="workStart" type="button">作業開始</button>
+                    <button id="workBreak" type="button">休憩</button>
+                    <button id="workEnd" type="button">終了</button>
+                </div>
+            </section>
+        </section>
+    </div>
+</section>
+
+<section class="app-page" id="sleepPage" data-page="sleep" aria-hidden="true">
+    <div class="sleep-page-shell">
+        <header class="sleep-page-header">
+            <div class="orion-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="page-kicker">SENDA</div>
+            <h1>Tonight</h1>
+            <p>眠る時間まで、ここにいる。</p>
+        </header>
+
+        <section class="sleep-visual" aria-label="眠るハリー">
+            <img id="sleepHarry" src="assets/companion-bedtime.jpg" alt="眠るハリー">
+            <div id="sleepMessage" class="sleep-message">眠る準備ができたら、「寝る」を押せ。</div>
+        </section>
+
+        <section class="sleep-panel" aria-labelledby="sleepRecordTitle">
+            <div class="sleep-panel-heading">
+                <div>
+                    <div class="sleep-label">SLEEP RECORD</div>
+                    <h2 id="sleepRecordTitle">睡眠時間</h2>
+                </div>
+                <div id="sleepStatus" class="sleep-state">まだ記録していません</div>
+            </div>
+
+            <div id="sleepTimer" class="sleep-counter">00:00:00</div>
+            <div id="sleepLastRecord" class="sleep-last-record">前回の睡眠：--</div>
+
+            <div id="bedtimeChoices" class="bedtime-choices" hidden>
+                <div class="bedtime-choice-title">どうする？</div>
+                <button type="button" data-bedtime-choice="talk">少し話して</button>
+                <button type="button" data-bedtime-choice="quiet">静かにして</button>
+                <button type="button" data-bedtime-choice="stay">ただ、そばにいて</button>
+            </div>
+
+            <div class="sleep-buttons">
+                <button id="sleepPrelude" type="button">眠る前に</button>
+                <button id="sleepStart" type="button">寝る</button>
+                <button id="sleepStop" type="button" hidden>起きる</button>
+                <button id="sleepReset" class="quiet-button" type="button">記録リセット</button>
+            </div>
+        </section>
+
+        <section class="alarm-panel" aria-labelledby="alarmTitle">
+            <div class="sleep-label">WAKE UP</div>
+            <h2 id="alarmTitle">起床アラーム</h2>
+
+            <label class="alarm-time-row" for="alarmTime">
+                <span>起床時刻</span>
+                <input id="alarmTime" type="time" value="07:30">
+            </label>
+
+            <label class="alarm-toggle-row">
+                <span>アラーム</span>
+                <input id="alarmEnabled" type="checkbox">
+                <span class="alarm-toggle-ui" aria-hidden="true"></span>
+            </label>
+
+            <button id="saveAlarm" type="button">アラームを保存</button>
+            <div id="alarmStatus" class="alarm-status">アラームは設定されていません</div>
+            <div id="alarmCountdown" class="alarm-countdown"></div>
+
+            <div id="alarmRingingPanel" class="alarm-ringing-panel" hidden>
+                <div class="alarm-ringing-label">WAKE UP</div>
+                <div id="alarmWakeMessage" class="alarm-wake-message">……レイ。</div>
+                <div class="alarm-action-buttons">
+                    <button id="alarmWakeButton" type="button">起きる</button>
+                    <button id="alarmSnoozeButton" class="quiet-button" type="button">あと5分</button>
+                </div>
+            </div>
+        </section>
+
+        <button class="page-back-button" type="button" data-go-page="home">Homeへ戻る</button>
+    </div>
+</section>
+
+<section class="app-page" id="settingsPage" data-page="settings" aria-hidden="true">
+    <div class="settings-page-shell">
+        <header class="settings-page-header">
+            <div class="orion-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="page-kicker">SENDA</div>
+            <h1>Settings</h1>
+            <p>この部屋の呼び方と音を、静かに整える。</p>
+        </header>
+
+        <section class="settings-panel" aria-labelledby="profileSettingsTitle">
+            <div class="settings-section-heading">
+                <div class="settings-label">PROFILE</div>
+                <h2 id="profileSettingsTitle">呼び名</h2>
+            </div>
+
+            <label class="settings-field" for="userNameInput">
+                <span>ハリーに呼んでほしい名前</span>
+                <input id="userNameInput" type="text" maxlength="24" autocomplete="nickname" placeholder="レイ">
+            </label>
+        </section>
+
+        <section class="settings-panel" aria-labelledby="soundSettingsTitle">
+            <div class="settings-section-heading">
+                <div class="settings-label">SOUND</div>
+                <h2 id="soundSettingsTitle">音量</h2>
+            </div>
+
+            <label class="volume-setting" for="bgmVolume">
+                <span>通常BGM</span>
+                <output id="bgmVolumeValue">18%</output>
+                <input id="bgmVolume" type="range" min="0" max="100" step="1" value="18">
+            </label>
+
+            <label class="volume-setting" for="livingVolume">
+                <span>生活音</span>
+                <output id="livingVolumeValue">15%</output>
+                <input id="livingVolume" type="range" min="0" max="100" step="1" value="15">
+            </label>
+
+            <label class="volume-setting" for="sleepVolume">
+                <span>睡眠中の寝息</span>
+                <output id="sleepVolumeValue">20%</output>
+                <input id="sleepVolume" type="range" min="0" max="100" step="1" value="20">
+            </label>
+        </section>
+
+        <section class="settings-panel" aria-labelledby="voiceSettingsTitle">
+            <div class="settings-section-heading">
+                <div class="settings-label">PRESENCE</div>
+                <h2 id="voiceSettingsTitle">独り言の頻度</h2>
+            </div>
+
+            <div class="frequency-options" role="radiogroup" aria-label="独り言の頻度">
+                <label><input type="radio" name="idleFrequency" value="low"><span>少ない</span></label>
+                <label><input type="radio" name="idleFrequency" value="normal" checked><span>普通</span></label>
+                <label><input type="radio" name="idleFrequency" value="high"><span>多い</span></label>
+            </div>
+        </section>
+
+        <section class="settings-panel settings-about" aria-label="バージョン情報">
+            <div>
+                <div class="settings-label">VERSION</div>
+                <strong>Senda v1.4 Settings</strong>
+            </div>
+            <div class="orion-mini" aria-hidden="true">✦ ✦ ✦</div>
+        </section>
+
+        <div id="settingsSavedMessage" class="settings-saved-message" role="status" aria-live="polite"></div>
+
+        <div class="settings-actions">
+            <button id="saveSettings" type="button">設定を保存</button>
+            <button id="resetSettings" class="quiet-button" type="button">初期値に戻す</button>
+        </div>
+
+        <button class="page-back-button" type="button" data-go-page="home">Homeへ戻る</button>
+    </div>
+</section>
+</main>
+
+<!-- 旧機能のJavaScriptを壊さないための一時的な互換要素。画面には表示されません。 -->
+<div class="legacy-compat" aria-hidden="true">
+    <input id="taskInput" type="text"><button id="addTask" type="button"></button><ul id="taskList"></ul>
+    <div id="moodQuestion"></div><div id="todayOrder"></div><div id="trainingSuggestion"></div>
+    <button class="mood-btn" data-mood="normal" type="button"></button>
+    <input id="memoryInput" type="text"><button id="addMemory" type="button"></button><ul id="memoryList"></ul>
+</div>
+
+<nav class="bottom-nav" aria-label="Senda navigation">
+    <button class="nav-button active" type="button" data-page-target="home">Home</button>
+    <button class="nav-button" type="button" data-page-target="sleep">Sleep</button>
+    <button class="nav-button" type="button" data-page-target="settings">Settings</button>
+</nav>
+
+<script src="js/splash.js?v=2"></script>
+<script src="js/background.js?v=1"></script>
+<script src="js/companion-dialogues.js?v=9"></script>
+<script src="js/message.js?v=12"></script>
+<script src="js/sound.js?v=16"></script>
+<script src="js/settings.js?v=1"></script>
+<script src="js/work-session.js?v=3"></script>
+<script src="js/tasks.js"></script>
+<script src="js/alarm.js?v=4"></script>
+<script src="js/sleep.js?v=9"></script>
+<script src="js/mood.js?v=3"></script>
+<script src="js/memory.js"></script>
+<script src="js/weather.js?v=2"></script>
+<script src="js/clock.js"></script>
+<script src="js/navigation.js?v=2"></script>
+<script src="js/companion-engine.js?v=5"></script>
+<script>window.USE_COMPANION_ENGINE=true;</script>
+<script src="js/main.js?v=3"></script>
+
+</body>
+</html>
