@@ -35,7 +35,7 @@ const bedtimeChoices = document.getElementById("bedtimeChoices");
 const bedtimeChoiceButtons = Array.from(document.querySelectorAll("[data-bedtime-choice]"));
 
 function getSendaName() {
-    return typeof getSendaUserName === "function" ? getSendaUserName() : "レイ";
+    return typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
 }
 
 function getHomeHarryImg() {

@@ -2,7 +2,7 @@
 // Senda Harry Voice
 // スペイン語音声と関西弁字幕を一組で管理する
 //========================
-
+　
 (function () {
     const VOICE_BASE_PATH = "sound/voice/";
     const VOICE_VOLUME = 0.92;
@@ -163,7 +163,7 @@
     function getUserName() {
         return typeof getSendaUserName === "function"
             ? getSendaUserName()
-            : "レイ";
+            : "きみ";
     }
 
     function resolveSubtitle(template) {

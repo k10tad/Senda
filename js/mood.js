@@ -21,7 +21,7 @@ const moodData = {
         lines: [
             "そら結構。",
             "今日はちょい飛ばせそうやな。",
-            "ただし調子乗ったらあかんで。レイ、そこ怪しいからな。"
+            "ただし調子乗ったらあかんで。{name}、そこ怪しいからな。"
         ],
         order: "今日の目安：25分を2回。余裕残ったら、軽く身体動かそか。",
         training: "運動メニュー：シャドー3分 × 3R、休憩1分。最後にストレッチ5分な。"
@@ -95,7 +95,9 @@ function setHarryLine(text) {
     const messageBox = getMessageBox();
 
     if (messageBox) {
-        messageBox.textContent = text;
+        messageBox.textContent = typeof personalizeSendaText === "function"
+            ? personalizeSendaText(text)
+            : text.replaceAll("{name}", "きみ");
     }
 }
 

@@ -126,7 +126,8 @@ function triggerAlarm() {
 
     const sleepingImage = window.SENDA_IMAGES?.sleeping || "assets/companion-sleep.jpg";
     setAlarmImage(sleepingImage);
-    setAlarmMessage(`……${typeof getSendaUserName === "function" ? getSendaUserName() : "レイ"}。起きる時間だ。`);
+    const playerName = getSendaUserName();
+    setAlarmMessage(`……${playerName}。起きる時間だ。`);
 
     if (typeof startAlarmSound === "function") startAlarmSound();
 }
@@ -144,9 +145,7 @@ function wakeFromAlarm() {
             const line = window.SendaVoice.playWakeUp(alarmWakeMessage);
             if (line) setAlarmMessage(line.subtitle);
         } else {
-            const name = typeof getSendaUserName === "function"
-                ? getSendaUserName()
-                : "レイ";
+            const name = getSendaUserName();
             setAlarmMessage(`おはよ、${name}。ほら、起きるん手伝ったる。`);
         }
     }

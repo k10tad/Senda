@@ -214,7 +214,8 @@ resetButton.addEventListener("click", function () {
 
     updateTimer();
 
-    message.textContent = "仕切り直そか、レイ。失敗ちゃう、調整や。";
+    const playerName = typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
+    message.textContent = `仕切り直そか、${playerName}。失敗ちゃう、調整や。`;
 });
 
 summaryButton.addEventListener("click", function () {

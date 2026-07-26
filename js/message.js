@@ -1,12 +1,12 @@
 const workMessages = [
-    "よう、レイ。今日も付き合おか。",
-    "机は逃げへんよ。レイが逃げたいなら五分だけな。",
+    "よう、{name}。今日も付き合おか。",
+    "机は逃げへんよ。{name}が逃げたいなら五分だけな。",
     "今日は何から片付ける？　めんどい方からいっとく？",
     "手ぇ動かし。俺は隣で機械でもいじっとくわ。"
 ];
 
 const morningMessages = [
-    "おはよ、レイ。起きられたんなら充分えらい。",
+    "おはよ、{name}。起きられたんなら充分えらい。",
     "まず水な。コーヒーはそのあとや。",
     "今日はどこまで行こか。俺も付き合うで。"
 ];
@@ -24,7 +24,7 @@ const rainMessages = [
 ];
 
 const lowPressureMessages = [
-    "気圧落ちとるな。レイまで一緒に落ちたらあかんで。",
+    "気圧落ちとるな。{name}まで一緒に落ちたらあかんで。",
     "頭痛来そうなら、意地張る前に止まりや。",
     "今日は低速運転な。壊れるよりずっとましや。"
 ];
@@ -70,12 +70,12 @@ function getMessageList(weatherCode, pressure){
 
 const welcomeMessages = {
     morning: [
-        "おはよ、レイ。起きたんなら半分勝ちや。",
+        "おはよ、{name}。起きたんなら半分勝ちや。",
         "来たんか。まず水、その次俺、ほんで机な。",
         "朝やな。昨日より一歩でええ。欲張らんとこ。"
     ],
     afternoon: [
-        "よう、レイ。午後のめんどいの、一緒に片付けよか。",
+        "よう、{name}。午後のめんどいの、一緒に片付けよか。",
         "眠そうやな。座っただけでも褒めたるわ。",
         "まだ時間あるって。焦って転ばんようにな。"
     ],
@@ -120,7 +120,7 @@ function getWelcomeMessage() {
 }
 
 const idleMessages = [
-    "……レイ。",
+    "……{name}。",
         "姿勢崩れとるで。こっちおいで、直したる。",
     "水、飲んだ？",
     "焦らんでええ。今やっとる分だけで充分や。",
@@ -187,7 +187,7 @@ const contextualIdleMessages = {
     lowPressure: [
         "気圧落ちとるな。機械なら叩いたら直るんやけど。",
         "今日は頭痛来ても不思議やないで。",
-        "今日は省エネな。レイは交換部品きかへんから。"
+        "今日は省エネな。{name}は交換部品きかへんから。"
     ],
 
     longFocus: [
@@ -361,13 +361,14 @@ function getDailySummaryMessage() {
         return `今日は${focusText}、ポモドーロは${count}回。悪くないな。ちゃんと積み上がってる。`;
     }
 
-    return `今日は${focusText}、ポモドーロは${count}回。よくやった、レイ。もう俺の隣で休んでいい。`;
+    const playerName = typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
+    return `今日は${focusText}、ポモドーロは${count}回。よくやった、${playerName}。もう俺の隣で休んでいい。`;
 }
 
 const sleepComments = {
 
     terrible: [
-        "……レイ、それ睡眠って呼ぶんは詐欺やろ。",
+        "……{name}、それ睡眠って呼ぶんは詐欺やろ。",
         "今日は無茶禁止な。反論は寝てから聞いたる。",
         "敵より先に睡魔に撃ち抜かれそうやな。",
         "集中する前に寝え。俺が見張っとくから。",
@@ -385,7 +386,7 @@ const sleepComments = {
         "休憩も仕事や。さぼりちゃう。",
         "無理したら夜に響くで。",
         "あと一時間眠れたら理想やったな。",
-        "飛ばしすぎんとき。燃料切れのレイ、重いねん。"
+        "飛ばしすぎんとき。燃料切れの{name}、重いねん。"
     ],
 
     good: [
@@ -414,7 +415,7 @@ const sleepComments = {
 
 const dailyFlowMessages = {
     morning: [
-        "おはよ、レイ。まず水な。話はそっから。",
+        "おはよ、{name}。まず水な。話はそっから。",
         "朝やで。最初は軽く暖機運転でいこ。",
         "今日は何から片付ける？　厄介なんは俺にも寄越し。"
     ],
@@ -555,7 +556,7 @@ function pickSendaDialogue(key) {
     if (!Array.isArray(list) || list.length === 0) return "";
 
     const selected = list[Math.floor(Math.random() * list.length)];
-    const name = typeof getSendaUserName === "function" ? getSendaUserName() : "レイ";
+    const name = typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
     return selected.replaceAll("{name}", name);
 }
 
@@ -577,7 +578,7 @@ function pickSendaReply(key) {
             const name =
                 typeof getSendaUserName === "function"
                     ? getSendaUserName()
-                    : "レイ";
+                    : "きみ";
 
             return {
                 main: selected.main.replaceAll("{name}", name),
@@ -599,7 +600,7 @@ function pickSendaReply(key) {
     const closingList = window.SendaDialogues?.[`${key}Closing`];
     if (!Array.isArray(mainList) || mainList.length === 0) return null;
 
-    const name = typeof getSendaUserName === "function" ? getSendaUserName() : "レイ";
+    const name = typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
     const mainIndex = Math.floor(Math.random() * mainList.length);
     const closingIndex =
         Array.isArray(closingList) && closingList.length > 0

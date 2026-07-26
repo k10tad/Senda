@@ -107,7 +107,9 @@ function getSendaUserName() {
 }
 
 function personalizeSendaText(text) {
-    return typeof text === "string" ? text.replaceAll("レイ", getSendaUserName()) : text;
+    return typeof text === "string"
+        ? text.replaceAll("{name}", getSendaUserName()).replaceAll("レイ", getSendaUserName())
+        : text;
 }
 
 function updateVisibleName(oldName, newName) {
