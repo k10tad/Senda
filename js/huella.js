@@ -2,7 +2,7 @@
 // Huella journal
 // Photos, diary entries and plans stored in IndexedDB
 //========================
-
+　
 (function () {
     "use strict";
 
@@ -31,6 +31,7 @@
         entryTitle: $("huellaEntryTitle"), entryTime: $("huellaEntryTime"), timeField: $("huellaEntryTimeField"),
         entryBody: $("huellaEntryBody"), bodyLabel: $("huellaEntryBodyLabel"), entryDelete: $("huellaEntryDelete")
     };
+    const sideRail = document.querySelector(".senda-side-rail");
 
     let dbPromise;
     let currentPhoto = null;
@@ -50,6 +51,25 @@
         "これ、俺は好きやで。理由は聞くな。",
         "たまにはこうして、立ち止まって見るんもええな。"
     ];
+
+    function updateSideRailPosition() {
+        if (!sideRail) return;
+        const viewport = window.visualViewport;
+        const viewportHeight = viewport?.height || window.innerHeight;
+        const viewportOffsetTop = viewport?.offsetTop || 0;
+        const compact = window.matchMedia("(max-width: 430px)").matches;
+        const preferredOffset = viewportHeight * (compact ? 0.18 : 0.21);
+        const minimumOffset = compact ? 108 : 118;
+        const maximumOffset = compact ? 156 : 184;
+        const top = viewportOffsetTop + Math.min(maximumOffset, Math.max(minimumOffset, preferredOffset));
+        sideRail.style.setProperty("--senda-side-rail-top", `${Math.round(top)}px`);
+    }
+
+    updateSideRailPosition();
+    window.addEventListener("resize", updateSideRailPosition, { passive: true });
+    window.addEventListener("orientationchange", updateSideRailPosition, { passive: true });
+    window.visualViewport?.addEventListener("resize", updateSideRailPosition, { passive: true });
+    window.visualViewport?.addEventListener("scroll", updateSideRailPosition, { passive: true });
 
     function openDatabase() {
         if (dbPromise) return dbPromise;
