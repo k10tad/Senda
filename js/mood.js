@@ -2,7 +2,7 @@
 // 今日の調子チェック
 // ハリー会話つき
 //========================
-
+　
 const moodButtons = document.querySelectorAll(".mood-btn");
 const todayOrder = document.getElementById("todayOrder");
 const trainingSuggestion = document.getElementById("trainingSuggestion");

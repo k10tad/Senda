@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
-    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="style.css?v=22">
 </head>
 
 <body class="splash-active">
@@ -259,6 +259,25 @@
         </section>
 
 
+        <section class="settings-panel" aria-labelledby="birthdaySettingsTitle">
+            <div class="settings-section-heading">
+                <div class="settings-label">BIRTHDAY</div>
+                <h2 id="birthdaySettingsTitle">誕生日</h2>
+            </div>
+            <p class="settings-note">俺の誕生日は3月4日やけど、お前の誕生日も俺に教えてや。</p>
+            <div class="birthday-fields">
+                <label class="settings-field" for="playerBirthdayMonth">
+                    <span>月</span>
+                    <select id="playerBirthdayMonth" aria-label="誕生月"></select>
+                </label>
+                <label class="settings-field" for="playerBirthdayDay">
+                    <span>日</span>
+                    <select id="playerBirthdayDay" aria-label="誕生日"></select>
+                </label>
+            </div>
+            <button id="clearPlayerBirthday" class="settings-inline-button quiet-button" type="button">誕生日を未設定に戻す</button>
+        </section>
+
         <section class="settings-panel" aria-labelledby="companionSettingsTitle">
             <div class="settings-section-heading">
                 <div class="settings-label">TOGETHER</div>
@@ -308,46 +327,69 @@
 
 
 <div id="huellaOverlay" class="huella-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="huellaTitle">
-    <section class="huella-journal">
+    <section class="huella-journal huella-journal-expanded">
         <header class="huella-header">
             <div>
                 <div class="huella-kicker">A TRACE OF US</div>
                 <h2 id="huellaTitle">Huella</h2>
-                <p>写真と、その日の小さな足跡。</p>
+                <p>写真、日記、これからの予定を2人で作っていこな。</p>
             </div>
             <button id="closeHuella" class="huella-close" type="button" aria-label="Huellaを閉じる">×</button>
         </header>
 
-        <div class="huella-toolbar">
-            <span id="huellaCount">0枚</span>
-            <button id="huellaAddButton" type="button">写真を追加</button>
-            <input id="huellaFileInput" type="file" accept="image/*" multiple hidden>
+        <div class="huella-mode-tabs" role="tablist" aria-label="Huellaの表示">
+            <button id="huellaAlbumTab" class="active" type="button" role="tab" aria-selected="true">写真</button>
+            <button id="huellaCalendarTab" type="button" role="tab" aria-selected="false">カレンダー</button>
         </div>
 
-        <div id="huellaEmpty" class="huella-empty">
-            <div class="huella-empty-mark" aria-hidden="true">❧</div>
-            <p>まだ写真はありません。</p>
-            <span>残しておきたい一枚から始めよう。</span>
-        </div>
-        <div id="huellaGrid" class="huella-grid" aria-live="polite"></div>
+        <section id="huellaAlbumPanel" class="huella-mode-panel">
+            <div class="huella-toolbar">
+                <span id="huellaCount">0枚</span>
+                <button id="huellaAddButton" type="button">写真を追加</button>
+                <input id="huellaFileInput" type="file" accept="image/*" multiple hidden>
+            </div>
+            <div id="huellaEmpty" class="huella-empty">
+                <div class="huella-empty-mark" aria-hidden="true">❧</div>
+                <p>まだ写真はありません。</p>
+                <span>残しておきたい一枚から始めよう。</span>
+            </div>
+            <div id="huellaGrid" class="huella-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="huellaCalendarPanel" class="huella-mode-panel" hidden>
+            <div class="huella-calendar-header">
+                <button id="huellaPrevMonth" type="button" aria-label="前の月">‹</button>
+                <h3 id="huellaCalendarTitle"></h3>
+                <button id="huellaNextMonth" type="button" aria-label="次の月">›</button>
+            </div>
+            <div class="huella-weekdays" aria-hidden="true"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+            <div id="huellaCalendarGrid" class="huella-calendar-grid"></div>
+            <section class="huella-day-sheet">
+                <header>
+                    <div>
+                        <div class="huella-kicker">DAILY PAGE</div>
+                        <h3 id="huellaSelectedDateTitle"></h3>
+                    </div>
+                    <div class="huella-day-actions">
+                        <button id="huellaAddDiary" type="button">日記を書く</button>
+                        <button id="huellaAddPlan" type="button">予定を追加</button>
+                    </div>
+                </header>
+                <div id="huellaDayEntries" class="huella-day-entries"></div>
+                <p id="huellaDayEmpty" class="huella-day-empty">この日のページは、まだ白紙です。</p>
+            </section>
+        </section>
     </section>
 </div>
 
 <div id="huellaViewer" class="huella-viewer" hidden role="dialog" aria-modal="true" aria-label="Huellaの写真">
     <div class="huella-viewer-card">
         <button id="huellaViewerClose" class="huella-viewer-close" type="button" aria-label="写真を閉じる">×</button>
-        <div class="huella-viewer-image-wrap">
-            <img id="huellaViewerImage" alt="">
-        </div>
+        <div class="huella-viewer-image-wrap"><img id="huellaViewerImage" alt=""></div>
+        <p id="huellaHarryComment" class="huella-harry-comment" aria-live="polite"></p>
         <div class="huella-viewer-fields">
-            <label>
-                <span>日付</span>
-                <input id="huellaViewerDate" type="date">
-            </label>
-            <label>
-                <span>ひとこと</span>
-                <textarea id="huellaViewerNote" maxlength="240" rows="3" placeholder="この写真のことを少しだけ。"></textarea>
-            </label>
+            <label><span>日付</span><input id="huellaViewerDate" type="date"></label>
+            <label><span>ひとこと</span><textarea id="huellaViewerNote" maxlength="240" rows="3" placeholder="この写真のことを少しだけ。"></textarea></label>
         </div>
         <div class="huella-viewer-actions">
             <button id="huellaViewerSave" type="button">保存</button>
@@ -356,13 +398,29 @@
     </div>
 </div>
 
-<!-- 旧機能のJavaScriptを壊さないための一時的な互換要素。画面には表示されません。 -->
-<div class="legacy-compat" aria-hidden="true">
-    <input id="taskInput" type="text"><button id="addTask" type="button"></button><ul id="taskList"></ul>
-    <div id="moodQuestion"></div><div id="todayOrder"></div><div id="trainingSuggestion"></div>
-    <button class="mood-btn" data-mood="normal" type="button"></button>
-    <input id="memoryInput" type="text"><button id="addMemory" type="button"></button><ul id="memoryList"></ul>
+<div id="huellaEntryEditor" class="huella-entry-editor" hidden role="dialog" aria-modal="true" aria-labelledby="huellaEntryEditorTitle">
+    <form id="huellaEntryForm" class="huella-entry-card">
+        <button id="huellaEntryClose" class="huella-viewer-close" type="button" aria-label="閉じる">×</button>
+        <div class="huella-kicker" id="huellaEntryKicker">DIARY</div>
+        <h3 id="huellaEntryEditorTitle">日記を書く</h3>
+        <input id="huellaEntryId" type="hidden">
+        <input id="huellaEntryType" type="hidden">
+        <label><span>日付</span><input id="huellaEntryDate" type="date" required></label>
+        <label><span>タイトル</span><input id="huellaEntryTitle" type="text" maxlength="80" placeholder="今日の見出し"></label>
+        <label id="huellaEntryTimeField" hidden><span>時刻</span><input id="huellaEntryTime" type="time"></label>
+        <label><span id="huellaEntryBodyLabel">本文</span><textarea id="huellaEntryBody" maxlength="2000" rows="8" placeholder="この日のことを残しておこう。"></textarea></label>
+        <div class="huella-viewer-actions">
+            <button type="submit">保存</button>
+            <button id="huellaEntryDelete" class="danger-quiet-button" type="button" hidden>削除</button>
+        </div>
+    </form>
 </div>
+
+<aside id="sendaBirthdayNotice" class="senda-birthday-notice" hidden aria-live="polite">
+    <button id="closeBirthdayNotice" type="button" aria-label="閉じる">×</button>
+    <div id="sendaBirthdayKicker" class="birthday-notice-kicker">BIRTHDAY</div>
+    <p id="sendaBirthdayMessage"></p>
+</aside>
 
 <nav class="bottom-nav" aria-label="Senda navigation">
     <button class="nav-button active" type="button" data-page-target="home">Home</button>
@@ -376,10 +434,11 @@
 <script src="js/message.js?v=13"></script>
 <script src="js/sound.js?v=17"></script>
 <script src="js/voice.js?v=2"></script>
-<script src="js/settings.js?v=2"></script>
+<script src="js/settings.js?v=3"></script>
 <script src="js/companion-days.js?v=1"></script>
-<script src="js/huella.js?v=1"></script>
-<script src="js/backup.js?v=1"></script>
+<script src="js/birthday.js?v=1"></script>
+<script src="js/huella.js?v=3"></script>
+<script src="js/backup.js?v=2"></script>
 <script src="js/work-session.js?v=5"></script>
 <script src="js/tasks.js"></script>
 <script src="js/alarm.js?v=5"></script>

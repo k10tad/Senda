@@ -1,6 +1,6 @@
 //========================
 // Senda backup / restore
-// ZIP: localStorage + Huella images
+// ZIP: localStorage + Huella photos, diaries and plans
 //========================
 
 (function () {
@@ -158,34 +158,46 @@
         setStatus("バックアップを作成中…");
 
         try {
-            const memories = await window.SendaHuella.getAllMemories();
+            const entries = await window.SendaHuella.getAllEntries();
             const files = [];
             const huellaIndex = [];
+            let photoCount = 0;
 
-            for (let index = 0; index < memories.length; index += 1) {
-                const memory = memories[index];
-                const extension = safeFileName(memory.fileName || "image").split(".").pop();
-                const fileName = `huella/images/${String(index + 1).padStart(4, "0")}-${memory.id}.${extension || "bin"}`;
-                const bytes = new Uint8Array(await memory.imageBlob.arrayBuffer());
-                files.push({ name: fileName, data: bytes });
-                huellaIndex.push({
-                    id: memory.id,
-                    fileName,
-                    originalName: memory.fileName || "",
-                    mimeType: memory.mimeType || memory.imageBlob.type || "application/octet-stream",
-                    createdAt: memory.createdAt,
-                    addedAt: memory.addedAt,
-                    updatedAt: memory.updatedAt || null,
-                    note: memory.note || ""
-                });
+            for (const entry of entries) {
+                const record = {
+                    id: entry.id,
+                    entryType: entry.entryType || (entry.imageBlob ? "memory" : "diary"),
+                    dateKey: entry.dateKey || "",
+                    createdAt: entry.createdAt,
+                    addedAt: entry.addedAt || null,
+                    updatedAt: entry.updatedAt || null,
+                    title: entry.title || "",
+                    note: entry.note || "",
+                    body: entry.body || "",
+                    time: entry.time || "",
+                    originalName: entry.fileName || "",
+                    mimeType: entry.mimeType || entry.imageBlob?.type || ""
+                };
+
+                if (entry.imageBlob instanceof Blob) {
+                    photoCount += 1;
+                    const original = safeFileName(entry.fileName || "image.bin");
+                    const extension = original.includes(".") ? original.split(".").pop() : "bin";
+                    const fileName = `huella/images/${String(photoCount).padStart(4, "0")}-${entry.id}.${extension}`;
+                    files.push({ name: fileName, data: new Uint8Array(await entry.imageBlob.arrayBuffer()) });
+                    record.fileName = fileName;
+                }
+
+                huellaIndex.push(record);
             }
 
             const manifest = {
                 format: "senda-backup",
-                version: 1,
+                version: 2,
                 app: "Senda",
                 createdAt: new Date().toISOString(),
-                huellaCount: huellaIndex.length
+                huellaEntryCount: huellaIndex.length,
+                huellaPhotoCount: photoCount
             };
 
             files.unshift(
@@ -198,14 +210,13 @@
             const blob = new Blob([zip], { type: "application/zip" });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement("a");
-            const date = new Date().toISOString().slice(0, 10);
             anchor.href = url;
-            anchor.download = `senda-backup-${date}.zip`;
+            anchor.download = `senda-backup-${new Date().toISOString().slice(0, 10)}.zip`;
             document.body.appendChild(anchor);
             anchor.click();
             anchor.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
-            setStatus(`バックアップ完了。Huella ${huellaIndex.length}枚を保存しました。`, "success");
+            setStatus(`バックアップ完了。Huella ${huellaIndex.length}件（写真${photoCount}枚）を保存しました。`, "success");
         } catch (error) {
             console.error(error);
             setStatus("バックアップを作成できませんでした。", "error");
@@ -237,21 +248,33 @@
 
             const localValues = JSON.parse(textDecoder.decode(localBytes));
             const huellaIndex = JSON.parse(textDecoder.decode(indexBytes));
-            const restoredMemories = [];
+            const restoredEntries = [];
+            let photoCount = 0;
 
             for (const entry of huellaIndex) {
-                const imageBytes = files.get(entry.fileName);
-                if (!imageBytes) throw new Error(`Huella画像が見つかりません: ${entry.fileName}`);
-                restoredMemories.push({
+                const restored = {
                     id: entry.id,
-                    imageBlob: new Blob([imageBytes], { type: entry.mimeType || "application/octet-stream" }),
-                    fileName: entry.originalName || entry.fileName.split("/").pop(),
-                    mimeType: entry.mimeType || "application/octet-stream",
+                    entryType: entry.entryType || (entry.fileName ? "memory" : "diary"),
+                    dateKey: entry.dateKey || "",
                     createdAt: Number(entry.createdAt) || Date.now(),
-                    addedAt: Number(entry.addedAt) || Date.now(),
+                    addedAt: entry.addedAt ? Number(entry.addedAt) : null,
                     updatedAt: entry.updatedAt ? Number(entry.updatedAt) : null,
-                    note: entry.note || ""
-                });
+                    title: entry.title || "",
+                    note: entry.note || "",
+                    body: entry.body || "",
+                    time: entry.time || "",
+                    fileName: entry.originalName || "",
+                    mimeType: entry.mimeType || ""
+                };
+
+                if (entry.fileName) {
+                    const imageBytes = files.get(entry.fileName);
+                    if (!imageBytes) throw new Error(`Huella画像が見つかりません: ${entry.fileName}`);
+                    restored.imageBlob = new Blob([imageBytes], { type: entry.mimeType || "application/octet-stream" });
+                    restored.fileName = entry.originalName || entry.fileName.split("/").pop();
+                    photoCount += 1;
+                }
+                restoredEntries.push(restored);
             }
 
             Object.keys(localStorage)
@@ -261,8 +284,8 @@
                 if (key.toLowerCase().startsWith("senda")) localStorage.setItem(key, value);
             });
 
-            await window.SendaHuella.importMemories(restoredMemories, { replace: true });
-            setStatus(`復元完了。Huella ${restoredMemories.length}枚を戻しました。再読み込みします。`, "success");
+            await window.SendaHuella.importEntries(restoredEntries, { replace: true });
+            setStatus(`復元完了。Huella ${restoredEntries.length}件（写真${photoCount}枚）を戻しました。再読み込みします。`, "success");
             setTimeout(() => window.location.reload(), 900);
         } catch (error) {
             console.error(error);

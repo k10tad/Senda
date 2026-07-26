@@ -3929,3 +3929,229 @@ body.huella-open {
         right: 62px;
     }
 }
+
+/* Huella journal phase 1: calendar, diary and plans */
+.huella-mode-panel[hidden],
+.huella-entry-editor[hidden],
+.huella-day-empty[hidden],
+.huella-entry-card label[hidden] { display: none !important; }
+
+.huella-journal-expanded { width: min(1040px, 100%); }
+.huella-mode-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 38px 0 52px;
+}
+.huella-mode-tabs button {
+    padding: 10px 20px;
+    border: 1px solid rgba(91, 76, 43, 0.22);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    color: #62563f;
+    box-shadow: none;
+}
+.huella-mode-tabs button.active {
+    background: linear-gradient(145deg, #415034, #253020);
+    color: #f1e2bb;
+    border-color: rgba(198,165,93,0.45);
+}
+.huella-calendar-header {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 38px 14px 52px;
+}
+.huella-calendar-header h3 { margin: 0; text-align: center; font-size: 22px; font-weight: 500; }
+.huella-calendar-header button {
+    width: 40px; height: 40px; padding: 0; border-radius: 999px;
+    background: rgba(49,61,38,.12); color: #4b513d; box-shadow: none;
+}
+.huella-weekdays,
+.huella-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    padding-left: 52px;
+    padding-right: 38px;
+}
+.huella-weekdays { margin-bottom: 6px; color: #796d56; font-size: 11px; text-align: center; }
+.huella-calendar-grid { padding-bottom: 22px; }
+.huella-calendar-blank { aspect-ratio: 1.2; }
+.huella-calendar-day {
+    position: relative;
+    min-height: 58px;
+    padding: 8px;
+    border: 1px solid rgba(85,69,37,.16);
+    border-radius: 10px;
+    background: rgba(255,255,255,.22);
+    color: #3e392f;
+    box-shadow: none;
+    text-align: left;
+}
+.huella-calendar-day.selected { outline: 2px solid rgba(92,110,71,.72); background: rgba(70,86,54,.12); }
+.huella-calendar-day.today span { font-weight: 700; color: #64734d; }
+.huella-calendar-day small { position: absolute; left: 8px; right: 8px; bottom: 7px; display: flex; gap: 3px; }
+.huella-calendar-day small::before,
+.huella-calendar-day small::after { content: ""; width: 5px; height: 5px; border-radius: 50%; display: none; }
+.huella-calendar-day small.has-photo::before { display: block; background: #7e6635; }
+.huella-calendar-day small.has-diary::after { display: block; background: #596d49; }
+.huella-calendar-day small.has-plan { border-bottom: 2px solid #9a664d; }
+.huella-day-sheet {
+    margin: 0 38px 38px 52px;
+    padding: 22px;
+    border: 1px solid rgba(91,74,39,.18);
+    border-radius: 16px;
+    background: rgba(255,255,255,.24);
+}
+.huella-day-sheet > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.huella-day-sheet h3 { margin: 4px 0 0; font-size: 20px; }
+.huella-day-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.huella-day-actions button {
+    padding: 9px 14px;
+    border: 1px solid rgba(87,103,66,.28);
+    background: rgba(56,70,43,.9);
+    color: #f0e2bd;
+}
+.huella-day-entries { display: grid; gap: 10px; margin-top: 18px; }
+.huella-day-entry { border-left: 3px solid #786235; background: rgba(255,255,255,.26); border-radius: 4px 10px 10px 4px; }
+.huella-entry-diary { border-left-color: #596d49; }
+.huella-entry-plan { border-left-color: #985f46; }
+.huella-day-entry-button {
+    width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+    padding: 12px; border: 0; background: transparent; color: #312d25; box-shadow: none; text-align: left;
+}
+.huella-day-entry-button strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.huella-day-entry-button time { font-size: 12px; color: #746852; }
+.huella-entry-tag { font-size: 10px; letter-spacing: .12em; color: #74613a; }
+.huella-day-entry p { margin: -2px 12px 12px; white-space: pre-wrap; color: #5e5545; line-height: 1.65; }
+.huella-day-empty { margin: 22px 0 4px; color: #776c58; text-align: center; }
+.huella-entry-editor {
+    position: fixed; inset: 0; z-index: 10050; display: grid; place-items: center;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    background: rgba(3,5,3,.88); backdrop-filter: blur(14px);
+}
+.huella-entry-card {
+    position: relative; width: min(620px, 100%); max-height: 92vh; overflow: auto;
+    padding: 28px; border: 1px solid rgba(202,170,101,.38); border-radius: 20px;
+    background: linear-gradient(155deg, #20291c, #0d130c); color: #f1e7cd;
+    box-shadow: 0 28px 70px rgba(0,0,0,.65);
+}
+.huella-entry-card h3 { margin: 5px 0 20px; font-size: 26px; }
+.huella-entry-card label { display: grid; gap: 7px; margin-top: 13px; color: #c9b889; font-size: 12px; letter-spacing: .08em; }
+.huella-entry-card input,
+.huella-entry-card textarea {
+    width: 100%; box-sizing: border-box; border: 1px solid rgba(202,170,101,.25); border-radius: 10px;
+    background: rgba(255,255,255,.055); color: #f4ead0; padding: 11px 12px; font: inherit;
+}
+.huella-entry-card textarea { resize: vertical; }
+.huella-entry-card .huella-viewer-close { right: 10px; top: 10px; background: rgba(13,17,12,.82); color: #f0dfb0; }
+
+@media (max-width: 640px) {
+    .huella-calendar-header, .huella-weekdays, .huella-calendar-grid { padding-left: 28px; padding-right: 18px; }
+    .huella-day-sheet { margin-left: 28px; margin-right: 18px; }
+    .huella-calendar-day { min-height: 46px; padding: 6px; }
+    .huella-day-sheet > header { display: grid; }
+    .huella-day-actions { justify-content: flex-start; }
+    .huella-mode-tabs { padding-left: 28px; padding-right: 18px; }
+    .huella-entry-card { padding: 24px 18px; }
+}
+
+/* ========================================================
+   Phase 2: right-following rail, birthdays and Huella voice
+======================================================== */
+.senda-side-rail {
+    top: 50%;
+    bottom: auto;
+    right: max(8px, env(safe-area-inset-right));
+    transform: translateY(-50%);
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+body.huella-open .senda-side-rail {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(18px, -50%);
+}
+
+.huella-harry-comment {
+    position: relative;
+    margin: 12px 2px 0;
+    padding: 12px 16px 12px 19px;
+    border-left: 2px solid rgba(211, 177, 103, .58);
+    border-radius: 0 10px 10px 0;
+    background: linear-gradient(90deg, rgba(188, 151, 78, .12), rgba(255,255,255,.025));
+    color: #eadbb7;
+    font-size: 14px;
+    line-height: 1.75;
+    letter-spacing: .035em;
+}
+
+.huella-harry-comment:empty { display: none; }
+
+.birthday-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(110px, 170px));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.senda-birthday-notice {
+    position: fixed;
+    z-index: 10025;
+    right: max(92px, calc(env(safe-area-inset-right) + 92px));
+    top: 50%;
+    width: min(310px, calc(100vw - 125px));
+    padding: 20px 42px 18px 20px;
+    transform: translateY(-50%);
+    border: 1px solid rgba(218, 181, 101, .48);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(218,181,101,.16), transparent 34%),
+        linear-gradient(145deg, rgba(42,55,33,.98), rgba(15,22,14,.98));
+    box-shadow: 0 22px 56px rgba(0,0,0,.48), inset 0 0 0 1px rgba(255,255,255,.035);
+    color: #efe2c1;
+}
+
+.senda-birthday-notice[hidden] { display: none !important; }
+.senda-birthday-notice button {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #d9c28c;
+    font-size: 23px;
+}
+.birthday-notice-kicker {
+    margin-bottom: 8px;
+    color: #c9aa69;
+    font-size: 10px;
+    letter-spacing: .25em;
+}
+.senda-birthday-notice p { margin: 0; line-height: 1.8; }
+body.senda-birthday-today .huella-book-ribbon {
+    background: linear-gradient(#a74c3f, #67271f);
+    filter: drop-shadow(0 0 6px rgba(213,164,92,.34));
+}
+body.senda-birthday-today .companion-day-badge {
+    box-shadow: -6px 10px 22px rgba(0,0,0,.34), inset 0 0 0 2px rgba(58,38,12,.28), 0 0 20px rgba(213,176,96,.22);
+}
+
+@media (max-width: 430px) {
+    .senda-side-rail {
+        top: 48%;
+        bottom: auto;
+        right: max(5px, env(safe-area-inset-right));
+        transform: translateY(-50%);
+    }
+    body.huella-open .senda-side-rail { transform: translate(14px, -50%); }
+    .senda-birthday-notice {
+        right: max(66px, calc(env(safe-area-inset-right) + 66px));
+        width: min(278px, calc(100vw - 82px));
+    }
+    .birthday-fields { grid-template-columns: 1fr 1fr; }
+}

@@ -57,7 +57,9 @@ const SENDA_PREFECTURES = [
 const sendaDefaultSettings = {
     userName: "レイ",
     weatherPrefecture: "osaka",
-    idleFrequency: "normal"
+    idleFrequency: "normal",
+    playerBirthdayMonth: null,
+    playerBirthdayDay: null
 };
 
 function clampSetting(value, min, max) {
@@ -76,7 +78,9 @@ function loadSendaSettings() {
                 : "osaka",
             idleFrequency: ["low", "normal", "high"].includes(saved?.idleFrequency)
                 ? saved.idleFrequency
-                : "normal"
+                : "normal",
+            playerBirthdayMonth: Number(saved?.playerBirthdayMonth) || null,
+            playerBirthdayDay: Number(saved?.playerBirthdayDay) || null
         };
     } catch (_) {
         return { ...sendaDefaultSettings };
@@ -91,6 +95,9 @@ const weatherPrefectureInput = document.getElementById("weatherPrefecture");
 const saveSettingsButton = document.getElementById("saveSettings");
 const resetSettingsButton = document.getElementById("resetSettings");
 const settingsSavedMessage = document.getElementById("settingsSavedMessage");
+const playerBirthdayMonthInput = document.getElementById("playerBirthdayMonth");
+const playerBirthdayDayInput = document.getElementById("playerBirthdayDay");
+const clearPlayerBirthdayButton = document.getElementById("clearPlayerBirthday");
 const frequencyInputs = Array.from(document.querySelectorAll('input[name="idleFrequency"]'));
 
 function saveSendaSettings() {
@@ -132,8 +139,37 @@ function getSendaIdleDelay(stage = "next") {
     return ranges[sendaSettings.idleFrequency][stage];
 }
 
+
+function daysInBirthdayMonth(month) {
+    return month ? new Date(2024, month, 0).getDate() : 31;
+}
+
+function fillBirthdayOptions() {
+    if (!playerBirthdayMonthInput || !playerBirthdayDayInput) return;
+    const currentMonth = Number(playerBirthdayMonthInput.value || sendaSettings.playerBirthdayMonth || 0);
+    playerBirthdayMonthInput.replaceChildren();
+    const emptyMonth = new Option("未設定", "");
+    playerBirthdayMonthInput.appendChild(emptyMonth);
+    for (let month = 1; month <= 12; month += 1) playerBirthdayMonthInput.appendChild(new Option(`${month}月`, String(month)));
+    playerBirthdayMonthInput.value = currentMonth ? String(currentMonth) : "";
+    fillBirthdayDays();
+}
+
+function fillBirthdayDays() {
+    if (!playerBirthdayMonthInput || !playerBirthdayDayInput) return;
+    const month = Number(playerBirthdayMonthInput.value || 0);
+    const selected = Number(playerBirthdayDayInput.value || sendaSettings.playerBirthdayDay || 0);
+    playerBirthdayDayInput.replaceChildren(new Option("未設定", ""));
+    if (month) for (let day = 1; day <= daysInBirthdayMonth(month); day += 1) playerBirthdayDayInput.appendChild(new Option(`${day}日`, String(day)));
+    playerBirthdayDayInput.value = month && selected <= daysInBirthdayMonth(month) ? String(selected) : "";
+    playerBirthdayDayInput.disabled = !month;
+}
 function fillSettingsForm() {
     if (userNameInput) userNameInput.value = sendaSettings.userName;
+    fillBirthdayOptions();
+    if (playerBirthdayMonthInput) playerBirthdayMonthInput.value = sendaSettings.playerBirthdayMonth ? String(sendaSettings.playerBirthdayMonth) : "";
+    fillBirthdayDays();
+    if (playerBirthdayDayInput) playerBirthdayDayInput.value = sendaSettings.playerBirthdayDay ? String(sendaSettings.playerBirthdayDay) : "";
     if (weatherPrefectureInput) {
         weatherPrefectureInput.replaceChildren(...SENDA_PREFECTURES.map(function (prefecture) {
             const option = document.createElement("option");
@@ -153,7 +189,9 @@ function readSettingsForm() {
         weatherPrefecture: SENDA_PREFECTURES.some(item => item.id === weatherPrefectureInput?.value)
             ? weatherPrefectureInput.value
             : "osaka",
-        idleFrequency: selected?.value || "normal"
+        idleFrequency: selected?.value || "normal",
+        playerBirthdayMonth: Number(playerBirthdayMonthInput?.value) || null,
+        playerBirthdayDay: Number(playerBirthdayDayInput?.value) || null
     };
 }
 
@@ -169,6 +207,7 @@ function commitSettings() {
     const oldName = lastSavedUserName;
     const oldPrefecture = sendaSettings.weatherPrefecture;
     sendaSettings = readSettingsForm();
+    window.sendaSettings = sendaSettings;
     lastSavedUserName = sendaSettings.userName;
     saveSendaSettings();
     updateVisibleName(oldName, sendaSettings.userName);
@@ -176,11 +215,13 @@ function commitSettings() {
         loadWeather();
     }
     showSaved("保存したで。");
+    window.dispatchEvent(new CustomEvent("senda-settings-changed", { detail: sendaSettings }));
 }
 
 function resetSendaSettings() {
     const oldName = lastSavedUserName;
     sendaSettings = { ...sendaDefaultSettings };
+    window.sendaSettings = sendaSettings;
     lastSavedUserName = sendaSettings.userName;
     saveSendaSettings();
     fillSettingsForm();
@@ -191,9 +232,23 @@ function resetSendaSettings() {
 
 if (saveSettingsButton) saveSettingsButton.addEventListener("click", commitSettings);
 if (resetSettingsButton) resetSettingsButton.addEventListener("click", resetSendaSettings);
+playerBirthdayMonthInput?.addEventListener("change", fillBirthdayDays);
+clearPlayerBirthdayButton?.addEventListener("click", function () {
+    if (playerBirthdayMonthInput) playerBirthdayMonthInput.value = "";
+    fillBirthdayDays();
+    sendaSettings.playerBirthdayMonth = null;
+    sendaSettings.playerBirthdayDay = null;
+    saveSendaSettings();
+    showSaved("誕生日設定を外したで。");
+    window.dispatchEvent(new CustomEvent("senda-settings-changed", { detail: sendaSettings }));
+});
 if (userNameInput) userNameInput.addEventListener("keydown", event => {
     if (event.key === "Enter") commitSettings();
 });
 
 fillSettingsForm();
 saveSendaSettings();
+
+window.sendaSettings = sendaSettings;
+window.getSendaUserName = getSendaUserName;
+window.personalizeSendaText = personalizeSendaText;
