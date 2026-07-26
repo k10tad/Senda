@@ -2,10 +2,10 @@
 // Huella journal
 // Photos, diary entries and plans stored in IndexedDB
 //========================
-　
+
 (function () {
     "use strict";
-
+　
     const DB_NAME = "senda-huella-db";
     const DB_VERSION = 2;
     const STORE_NAME = "memories";
@@ -32,6 +32,12 @@
         entryBody: $("huellaEntryBody"), bodyLabel: $("huellaEntryBodyLabel"), entryDelete: $("huellaEntryDelete")
     };
     const sideRail = document.querySelector(".senda-side-rail");
+
+    // Keep viewport-fixed layers outside transformed app containers.
+    // Mobile Safari otherwise positions them against the full document.
+    if (elements.overlay && elements.overlay.parentElement !== document.body) {
+        document.body.appendChild(elements.overlay);
+    }
 
     let dbPromise;
     let currentPhoto = null;
@@ -253,7 +259,20 @@
         album ? renderAlbum() : renderCalendar();
     }
 
-    function openOverlay() { elements.overlay.hidden = false; document.body.classList.add("huella-open"); switchMode("album"); }
+    function openOverlay() {
+        elements.overlay.hidden = false;
+        document.body.classList.add("huella-open");
+        switchMode("album");
+
+        const journal = elements.overlay.querySelector(".huella-journal");
+        elements.overlay.scrollTop = 0;
+        if (journal) journal.scrollTop = 0;
+
+        requestAnimationFrame(() => {
+            elements.overlay.scrollTop = 0;
+            if (journal) journal.scrollTop = 0;
+        });
+    }
     function closeOverlay() { closePhoto(); closeEditor(); elements.overlay.hidden = true; document.body.classList.remove("huella-open"); }
 
     function nextPhotoComment() {

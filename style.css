@@ -3566,7 +3566,16 @@ body.alarm-mode::before {
     z-index: 10030;
     display: grid;
     place-items: center;
-    padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(88px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+    box-sizing: border-box;
+    width: 100%;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    overflow: hidden;
+    padding:
+        max(18px, env(safe-area-inset-top))
+        max(18px, env(safe-area-inset-right))
+        max(18px, env(safe-area-inset-bottom))
+        max(18px, env(safe-area-inset-left));
     background: rgba(4, 7, 4, 0.78);
     backdrop-filter: blur(12px);
 }
@@ -3574,8 +3583,10 @@ body.alarm-mode::before {
 .huella-journal {
     position: relative;
     width: min(940px, 100%);
-    max-height: min(82vh, 900px);
+    max-height: min(82dvh, 900px);
     overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid rgba(202, 169, 98, 0.42);
     border-radius: 22px 8px 8px 22px;
     background:
@@ -3681,7 +3692,7 @@ body.alarm-mode::before {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
-    padding: 6px 38px 42px 52px;
+    padding: 6px 38px 42px;
 }
 
 .huella-photo {
@@ -3889,12 +3900,12 @@ body.huella-open {
     }
 
     .huella-toolbar {
-        padding: 14px 16px 14px 35px;
+        padding: 14px 16px;
     }
 
     .huella-grid {
         gap: 5px;
-        padding: 4px 14px 30px 35px;
+        padding: 4px 16px 30px;
     }
 
     .huella-photo {
@@ -3936,11 +3947,18 @@ body.huella-open {
 .huella-day-empty[hidden],
 .huella-entry-card label[hidden] { display: none !important; }
 
-.huella-journal-expanded { width: min(1040px, 100%); }
+.huella-journal-expanded {
+    --huella-content-gutter: 38px;
+    width: min(1040px, 100%);
+}
 .huella-mode-tabs {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 8px;
-    padding: 16px 38px 0 52px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px var(--huella-content-gutter) 0;
 }
 .huella-mode-tabs button {
     padding: 10px 20px;
@@ -3960,7 +3978,9 @@ body.huella-open {
     grid-template-columns: 44px 1fr 44px;
     align-items: center;
     gap: 10px;
-    padding: 20px 38px 14px 52px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px var(--huella-content-gutter) 14px;
 }
 .huella-calendar-header h3 { margin: 0; text-align: center; font-size: 22px; font-weight: 500; }
 .huella-calendar-header button {
@@ -3972,22 +3992,28 @@ body.huella-open {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 6px;
-    padding-left: 52px;
-    padding-right: 38px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: var(--huella-content-gutter);
+    padding-right: var(--huella-content-gutter);
 }
 .huella-weekdays { margin-bottom: 6px; color: #796d56; font-size: 11px; text-align: center; }
 .huella-calendar-grid { padding-bottom: 22px; }
 .huella-calendar-blank { aspect-ratio: 1.2; }
 .huella-calendar-day {
     position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
     min-height: 58px;
+    box-sizing: border-box;
     padding: 8px;
     border: 1px solid rgba(85,69,37,.16);
     border-radius: 10px;
     background: rgba(255,255,255,.22);
     color: #3e392f;
     box-shadow: none;
-    text-align: left;
+    text-align: center;
 }
 .huella-calendar-day.selected { outline: 2px solid rgba(92,110,71,.72); background: rgba(70,86,54,.12); }
 .huella-calendar-day.today span { font-weight: 700; color: #64734d; }
@@ -3998,7 +4024,7 @@ body.huella-open {
 .huella-calendar-day small.has-diary::after { display: block; background: #596d49; }
 .huella-calendar-day small.has-plan { border-bottom: 2px solid #9a664d; }
 .huella-day-sheet {
-    margin: 0 38px 38px 52px;
+    margin: 0 var(--huella-content-gutter) 38px;
     padding: 22px;
     border: 1px solid rgba(91,74,39,.18);
     border-radius: 16px;
@@ -4048,12 +4074,35 @@ body.huella-open {
 .huella-entry-card .huella-viewer-close { right: 10px; top: 10px; background: rgba(13,17,12,.82); color: #f0dfb0; }
 
 @media (max-width: 640px) {
-    .huella-calendar-header, .huella-weekdays, .huella-calendar-grid { padding-left: 28px; padding-right: 18px; }
-    .huella-day-sheet { margin-left: 28px; margin-right: 18px; }
-    .huella-calendar-day { min-height: 46px; padding: 6px; }
+    .huella-journal-expanded {
+        --huella-content-gutter: 16px;
+    }
+    .huella-calendar-header, .huella-weekdays, .huella-calendar-grid {
+        padding-left: var(--huella-content-gutter);
+        padding-right: var(--huella-content-gutter);
+    }
+    .huella-day-sheet {
+        margin-left: var(--huella-content-gutter);
+        margin-right: var(--huella-content-gutter);
+    }
+    .huella-weekdays,
+    .huella-calendar-grid { gap: clamp(3px, 1vw, 6px); }
+    .huella-calendar-day {
+        min-height: clamp(42px, 11vw, 48px);
+        padding: 6px;
+        border-radius: 8px;
+    }
+    .huella-calendar-day small {
+        left: 6px;
+        right: 6px;
+        bottom: 5px;
+    }
     .huella-day-sheet > header { display: grid; }
     .huella-day-actions { justify-content: flex-start; }
-    .huella-mode-tabs { padding-left: 28px; padding-right: 18px; }
+    .huella-mode-tabs {
+        padding-left: var(--huella-content-gutter);
+        padding-right: var(--huella-content-gutter);
+    }
     .huella-entry-card { padding: 24px 18px; }
 }
 
