@@ -164,15 +164,23 @@ function startSleepRecord() {
     updateSleepButtons(true);
 
     if (sleepStatus) sleepStatus.textContent = "睡眠中";
-    setSleepMessages(
-        pickSleepDialogue("sleepStart") || `……おやすみ、${getSendaName()}。`,
-        true
-    );
+    if (typeof startSleepBgm === "function") startSleepBgm();
+
+    if (window.SendaVoice) {
+        const line = window.SendaVoice.play("sleepStart", sleepMessage);
+        if (line) {
+            const home = getHomeMessageBox();
+            if (home) home.textContent = line.subtitle;
+        }
+    } else {
+        setSleepMessages(
+            `${getSendaName()}、今日の分はもう充分や。明日のことは、起きてからでええ。`,
+            true
+        );
+    }
 
     updateSleepTimer();
     sleepTimerId = setInterval(updateSleepTimer, 1000);
-
-    if (typeof startSleepBgm === "function") startSleepBgm();
 }
 
 function getSleepComment(recordText) {
@@ -209,8 +217,15 @@ function stopSleepRecord() {
     if (sleepStatus) sleepStatus.textContent = "記録完了";
     if (sleepLastRecord) sleepLastRecord.textContent = "前回の睡眠：" + recordText;
 
-    const wakeLine = pickSleepDialogue("wakeUp") || `……おはよう、${getSendaName()}。`;
-    setSleepMessages(wakeLine, true);
+    if (window.SendaVoice) {
+        const line = window.SendaVoice.playWakeUp(sleepMessage);
+        if (line) {
+            const home = getHomeMessageBox();
+            if (home) home.textContent = line.subtitle;
+        }
+    } else {
+        setSleepMessages(`おはよ、${getSendaName()}。ほら、起きるん手伝ったる。`, true);
+    }
     sleepCommentTimer = setTimeout(function () {
         setSleepMessages(getSleepComment(recordText), true);
     }, 3000);
@@ -254,7 +269,7 @@ function loadSleepRecord() {
     document.body.classList.add("sleep-mode");
     setHomeImage(window.SENDA_IMAGES.sleeping);
     setSleepImage(window.SENDA_IMAGES.sleeping);
-    setSleepMessages("……睡眠中だ。", true);
+    setSleepMessages("……zzZ。", true);
     updateSleepButtons(true);
 
     if (sleepStatus) sleepStatus.textContent = "睡眠中";

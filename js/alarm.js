@@ -140,7 +140,15 @@ function wakeFromAlarm() {
     } else {
         const morningImage = window.SENDA_IMAGES?.morning || "assets/companion-morning.jpg";
         setAlarmImage(morningImage);
-        setAlarmMessage("……おはよう。");
+        if (window.SendaVoice) {
+            const line = window.SendaVoice.playWakeUp(alarmWakeMessage);
+            if (line) setAlarmMessage(line.subtitle);
+        } else {
+            const name = typeof getSendaUserName === "function"
+                ? getSendaUserName()
+                : "レイ";
+            setAlarmMessage(`おはよ、${name}。ほら、起きるん手伝ったる。`);
+        }
     }
     updateAlarmPreview();
 }

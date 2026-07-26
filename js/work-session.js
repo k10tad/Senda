@@ -194,13 +194,10 @@ function beginWorkSession() {
     setSessionCompanionImage("work");
     startWorkSoundsSafely();
 
-    if (message) {
-        const list = typeof getMessageList === "function"
-            ? getMessageList(currentWeatherCode, currentPressure)
-            : ["ほな、やろか。俺も付き合うで。"];
-        message.textContent = typeof randomMessage === "function"
-            ? randomMessage(list)
-            : list[0];
+    if (window.SendaVoice) {
+        window.SendaVoice.play("workStart", message);
+    } else if (message) {
+        message.textContent = "ほな、手ぇ動かそか。逃げるんは五分だけ許したる。";
     }
 
     saveSessionState();
@@ -218,13 +215,10 @@ function beginBreakSession() {
     setSessionCompanionImage("break");
     startBreakSoundsSafely();
 
-    if (message) {
-        const list = typeof breakMessages !== "undefined"
-            ? breakMessages
-            : ["休憩やで。手ぇ止めへんなら没収するからな。"];
-        message.textContent = typeof randomMessage === "function"
-            ? randomMessage(list)
-            : list[0];
+    if (window.SendaVoice) {
+        window.SendaVoice.play("breakStart", message);
+    } else if (message) {
+        message.textContent = "休憩やで。手ぇ止めへんなら、俺が没収するからな。";
     }
 
     saveSessionState();
@@ -243,10 +237,17 @@ function endWorkSession() {
     saveSessionState();
     updateSessionDisplay();
 
-    if (message) {
-        const workText = formatSessionTime(workSeconds);
-        const breakText = formatSessionTime(breakSeconds);
-        message.textContent = `作業 ${workText}、休憩 ${breakText}。ようやったな、レイ。あとはちょっとこっちで休み。`;
+    const workText = formatSessionTime(workSeconds);
+    const breakText = formatSessionTime(breakSeconds);
+
+    if (window.SendaVoice) {
+        window.SendaVoice.play("workComplete", message);
+    } else if (message) {
+        message.textContent = "今日は終いや。そんな顔せんでも、もう充分やったで。";
+    }
+
+    if (sessionStatus) {
+        sessionStatus.title = `今回の記録：作業 ${workText}／休憩 ${breakText}`;
     }
 }
 
@@ -295,3 +296,4 @@ document.addEventListener("visibilitychange", function () {
         }
     }
 });
+ 

@@ -12,3 +12,7 @@ loadWeather();
 if (message && typeof getDailyFlowMessage === "function") {
     message.textContent = getDailyFlowMessage();
 }
+
+if (window.SendaVoice && message) {
+    window.SendaVoice.queueWelcome(message);
+}
