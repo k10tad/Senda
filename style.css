@@ -3118,3 +3118,166 @@ input[type="number"] {
     font-family: var(--font-reading);
     font-weight: 500;
 }
+
+/* ========================
+   Natural ambient effects
+   星座・点滅を廃止し、低頻度の葉と日差しだけを表示
+======================== */
+.moonlight-sky::after,
+.senda-dashboard::after,
+.sleep-panel::after,
+.alarm-panel::after,
+.settings-panel::after,
+.session-card::after,
+.page-shell-card::after,
+.sleep-page-shell::after {
+    animation: none !important;
+}
+
+.senda-nature-effects {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+}
+
+.senda-olive-leaf {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 17px;
+    height: 8px;
+    border-radius: 100% 0 100% 0;
+    opacity: 0;
+    background:
+        linear-gradient(155deg, rgba(183, 170, 104, 0.82), rgba(78, 96, 55, 0.86) 55%, rgba(28, 42, 25, 0.92));
+    box-shadow: inset 0 -1px 0 rgba(225, 205, 139, 0.24), 0 3px 8px rgba(0, 0, 0, 0.16);
+    transform-origin: 30% 50%;
+    will-change: transform, opacity;
+    animation: sendaLeafDrift var(--leaf-duration, 12s) cubic-bezier(.31,.12,.55,.92) forwards;
+}
+
+.senda-olive-leaf::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 50%;
+    height: 1px;
+    background: rgba(226, 208, 145, 0.34);
+    transform: rotate(-17deg);
+    transform-origin: left center;
+}
+
+.senda-sunlight {
+    position: absolute;
+    inset: -20% -45%;
+    opacity: 0;
+    transform: translateX(22%) rotate(-8deg);
+    background:
+        linear-gradient(112deg,
+            transparent 35%,
+            rgba(238, 219, 165, 0.025) 42%,
+            rgba(238, 219, 165, 0.10) 49%,
+            rgba(238, 219, 165, 0.035) 56%,
+            transparent 65%);
+    filter: blur(18px);
+    will-change: transform, opacity;
+    animation: sendaSunlightPass 13s ease-in-out forwards;
+}
+
+.senda-sunlight.from-left {
+    transform: translateX(-22%) rotate(8deg) scaleX(-1);
+}
+
+@keyframes sendaLeafDrift {
+    0% {
+        opacity: 0;
+        transform: translate3d(var(--leaf-start-x), var(--leaf-start-y), 0) rotate(0deg) scale(0.88);
+    }
+    12% { opacity: 0.72; }
+    72% { opacity: 0.62; }
+    100% {
+        opacity: 0;
+        transform:
+            translate3d(calc(var(--leaf-start-x) + var(--leaf-drift-x)), calc(var(--leaf-start-y) + var(--leaf-fall-y)), 0)
+            rotate(var(--leaf-rotate)) scale(1.04);
+    }
+}
+
+@keyframes sendaSunlightPass {
+    0%, 100% { opacity: 0; }
+    26% { opacity: 0.34; }
+    62% { opacity: 0.24; }
+}
+
+/* Work Session: narrow iPhone widthsでもカード内に収める */
+.session-times {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.session-time-block {
+    min-width: 0;
+    padding-inline: clamp(7px, 2.8vw, 14px);
+}
+
+.session-time-block strong {
+    width: 100%;
+    min-width: 0;
+    font-size: clamp(18px, 6.2vw, 27px);
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+}
+
+.session-buttons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.session-buttons button {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 390px) {
+    .session-card {
+        padding: 16px 13px;
+    }
+
+    .session-heading {
+        gap: 10px;
+    }
+
+    .session-heading h2 {
+        font-size: 17px;
+    }
+
+    .session-times {
+        gap: 7px;
+    }
+
+    .session-time-block span {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+    }
+
+    .session-time-block strong {
+        font-size: clamp(16px, 5.35vw, 21px);
+    }
+
+    .session-buttons {
+        gap: 6px;
+    }
+
+    .session-buttons button {
+        padding-inline: 4px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .senda-nature-effects {
+        display: none;
+    }
+}
