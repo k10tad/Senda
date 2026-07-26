@@ -115,8 +115,16 @@ function openBedtimeConversation() {
 
     setBedtimeChoicesVisible(true);
 
-    const line = pickSleepDialogue("bedtimeIntro") || "眠る前に、少し話すか。";
-    setSleepMessages(line);
+    if (window.SendaVoice) {
+        const line = window.SendaVoice.playGoodnight(sleepMessage);
+        if (line) {
+            const home = getHomeMessageBox();
+            if (home) home.textContent = line.subtitle;
+        }
+    } else {
+        const line = pickSleepDialogue("bedtimeIntro") || "眠る前に、少し話すか。";
+        setSleepMessages(line, true);
+    }
 }
 
 function handleBedtimeChoice(choice) {

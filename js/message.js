@@ -713,11 +713,15 @@ function callHarry() {
     harryCallCount += 1;
     clearTimeout(harryCallResetTimer);
 
-    const key = harryCallCount === 1 ? "normalCall" : "normalCallRepeat";
-    const line = pickSendaDialogue(key);
+    if (window.SendaVoice && message) {
+        window.SendaVoice.playHarryChat(message);
+    } else {
+        const key = harryCallCount === 1 ? "normalCall" : "normalCallRepeat";
+        const line = pickSendaDialogue(key);
 
-    if (line && message) {
-        message.textContent = line;
+        if (line && message) {
+            message.textContent = line;
+        }
     }
 
     updateCompanionReplyChoices();
