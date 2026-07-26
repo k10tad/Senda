@@ -5,7 +5,7 @@
 
 (function () {
     "use strict";
-　
+
     const DB_NAME = "senda-huella-db";
     const DB_VERSION = 2;
     const STORE_NAME = "memories";
@@ -33,11 +33,13 @@
     };
     const sideRail = document.querySelector(".senda-side-rail");
 
-    // Keep viewport-fixed layers outside transformed app containers.
-    // Mobile Safari otherwise positions them against the full document.
-    if (elements.overlay && elements.overlay.parentElement !== document.body) {
-        document.body.appendChild(elements.overlay);
-    }
+    // Keep every viewport-fixed layer outside transformed app containers.
+    // Mobile Safari otherwise positions nested dialogs against the full document.
+    [elements.overlay, elements.viewer, elements.editor].forEach(layer => {
+        if (layer && layer.parentElement !== document.body) {
+            document.body.appendChild(layer);
+        }
+    });
 
     let dbPromise;
     let currentPhoto = null;
@@ -290,7 +292,14 @@
         elements.viewerNote.value = photo.note || "";
         elements.viewerDate.value = photo.dateKey || dateKeyFromTimestamp(photo.createdAt);
         if (elements.harryComment) elements.harryComment.textContent = nextPhotoComment();
+        elements.viewer.scrollTop = 0;
+        const viewerCard = elements.viewer.querySelector(".huella-viewer-card");
+        if (viewerCard) viewerCard.scrollTop = 0;
         elements.viewer.hidden = false;
+        requestAnimationFrame(() => {
+            elements.viewer.scrollTop = 0;
+            if (viewerCard) viewerCard.scrollTop = 0;
+        });
     }
     function closePhoto() {
         elements.viewer.hidden = true;

@@ -4191,6 +4191,79 @@ body.senda-birthday-today .companion-day-badge {
     box-shadow: -6px 10px 22px rgba(0,0,0,.34), inset 0 0 0 2px rgba(58,38,12,.28), 0 0 20px rgba(213,176,96,.22);
 }
 
+/* Huella's visual page begins after the 30px spine. Align every inner
+   section to that page instead of centering it across the full book. */
+.huella-journal-expanded {
+    --huella-binding-offset: 30px;
+}
+
+.huella-journal-expanded .huella-mode-tabs,
+.huella-journal-expanded .huella-calendar-header,
+.huella-journal-expanded .huella-weekdays,
+.huella-journal-expanded .huella-calendar-grid {
+    padding-left: calc(var(--huella-content-gutter) + var(--huella-binding-offset));
+    padding-right: var(--huella-content-gutter);
+}
+
+.huella-journal-expanded .huella-toolbar {
+    padding-left: calc(var(--huella-content-gutter) + var(--huella-binding-offset));
+    padding-right: var(--huella-content-gutter);
+}
+
+.huella-journal-expanded .huella-grid {
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: calc(var(--huella-content-gutter) + var(--huella-binding-offset));
+    padding-right: var(--huella-content-gutter);
+}
+
+.huella-journal-expanded .huella-day-sheet {
+    margin-left: calc(var(--huella-content-gutter) + var(--huella-binding-offset));
+    margin-right: var(--huella-content-gutter);
+}
+
+/* huella.js moves the viewer to body so Mobile Safari can use the actual
+   visible viewport rather than a transformed, scrollable app container. */
+.huella-viewer {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    overflow: hidden;
+}
+
+.huella-viewer-card {
+    box-sizing: border-box;
+    max-height: calc(100dvh - max(32px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+    .huella-viewer {
+        padding:
+            max(12px, env(safe-area-inset-top))
+            max(12px, env(safe-area-inset-right))
+            max(12px, env(safe-area-inset-bottom))
+            max(12px, env(safe-area-inset-left));
+    }
+
+    .huella-viewer-card {
+        width: 100%;
+        max-height: calc(100dvh - max(24px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+        padding: 12px;
+    }
+
+    .huella-viewer-image-wrap {
+        min-height: 0;
+        max-height: 64dvh;
+    }
+
+    .huella-viewer-image-wrap img {
+        max-height: 64dvh;
+    }
+}
+
 @media (max-width: 430px) {
     .senda-side-rail {
         top: var(--senda-side-rail-top, clamp(108px, 18dvh, 156px));
