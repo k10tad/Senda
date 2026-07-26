@@ -19,9 +19,30 @@ const alarmRingingPanel = document.getElementById("alarmRingingPanel");
 const alarmWakeMessage = document.getElementById("alarmWakeMessage");
 const alarmWakeButton = document.getElementById("alarmWakeButton");
 const alarmSnoozeButton = document.getElementById("alarmSnoozeButton");
-
+　
 let alarmCheckTimer = null;
 let alarmIsRinging = false;
+let lastAlarmGreetingIndex = -1;
+
+function getHarryAlarmGreeting() {
+    const playerName = typeof getSendaUserName === "function"
+        ? getSendaUserName()
+        : "きみ";
+    const greetings = [
+        `おはよ、${playerName}。そろそろ起きよか。`,
+        `朝やで、${playerName}。ほら、目ぇ開けて。`,
+        `まだ寝たい顔しとるな、${playerName}。`,
+        `起きられるか、${playerName}？ 俺がおるから、ゆっくりでええ。`,
+        `おはよ、${playerName}。今日も最初に会えたな。`
+    ];
+
+    const candidates = greetings
+        .map((text, index) => ({ text, index }))
+        .filter(item => greetings.length === 1 || item.index !== lastAlarmGreetingIndex);
+    const selected = candidates[Math.floor(Math.random() * candidates.length)];
+    lastAlarmGreetingIndex = selected.index;
+    return selected.text;
+}
 
 function getSavedAlarmTime() {
     return localStorage.getItem(SENDA_ALARM_KEYS.time) || "07:30";
@@ -72,8 +93,8 @@ function updateAlarmPreview() {
     const snooze = getSnoozeUntil();
     const target = getAlarmTarget();
     alarmStatus.textContent = snooze
-        ? "5分後にもう一度起こす。"
-        : `${getSavedAlarmTime()} に起こす。`;
+        ? "5分後に、もう一回起こすで。"
+        : `${getSavedAlarmTime()} に起こしたる。`;
     alarmCountdown.textContent = target ? formatRemaining(target - Date.now()) : "";
 }
 
@@ -89,7 +110,7 @@ function saveAlarmSettings() {
     updateAlarmPreview();
 
     if (typeof setSleepMessages === "function") {
-        setSleepMessages(enabled ? `${time}だな。起こす。` : "アラームを外した。");
+        setSleepMessages(enabled ? `${time}やな。ちゃんと起こしたる。` : "アラーム、外しといたで。");
     }
 }
 
@@ -126,8 +147,7 @@ function triggerAlarm() {
 
     const sleepingImage = window.SENDA_IMAGES?.sleeping || "assets/companion-sleep.jpg";
     setAlarmImage(sleepingImage);
-    const playerName = getSendaUserName();
-    setAlarmMessage(`……${playerName}。起きる時間だ。`);
+    setAlarmMessage(getHarryAlarmGreeting());
 
     if (typeof startAlarmSound === "function") startAlarmSound();
 }
@@ -162,7 +182,8 @@ function snoozeAlarm() {
     document.body.classList.add("sleep-mode");
     const sleepingImage = window.SENDA_IMAGES?.sleeping || "assets/companion-sleep.jpg";
     setAlarmImage(sleepingImage);
-    setAlarmMessage("あと5分だ。……眠れ。");
+    const playerName = typeof getSendaUserName === "function" ? getSendaUserName() : "きみ";
+    setAlarmMessage(`あと5分な、${playerName}。その間だけ、もう一回寝ぇ。`);
     if (typeof startSleepBgm === "function") startSleepBgm();
     updateAlarmPreview();
 }
