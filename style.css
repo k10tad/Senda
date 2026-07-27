@@ -4278,3 +4278,184 @@ body.senda-birthday-today .companion-day-badge {
     }
     .birthday-fields { grid-template-columns: 1fr 1fr; }
 }
+
+/* ========================
+   Senda First Meeting
+======================== */
+
+body.onboarding-open {
+    overflow: hidden;
+}
+
+.senda-onboarding[hidden] {
+    display: none;
+}
+
+.senda-onboarding {
+    position: fixed;
+    inset: auto;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: var(--senda-viewport-height, 100dvh);
+    z-index: 10060;
+    display: block;
+    box-sizing: border-box;
+    padding:
+        max(24px, env(safe-area-inset-top))
+        max(18px, env(safe-area-inset-right))
+        max(24px, env(safe-area-inset-bottom))
+        max(18px, env(safe-area-inset-left));
+    overflow-y: auto;
+    background:
+        linear-gradient(rgba(4, 10, 7, 0.7), rgba(4, 10, 7, 0.86)),
+        radial-gradient(circle at 50% 18%, rgba(112, 102, 59, 0.2), transparent 46%),
+        #071009;
+    backdrop-filter: blur(18px);
+}
+
+.senda-onboarding-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(480px, calc(100vw - 36px));
+    max-height: calc(var(--senda-viewport-height, 100dvh) - max(48px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    box-sizing: border-box;
+    padding: clamp(28px, 7vw, 46px);
+    overflow-y: auto;
+    border: 1px solid rgba(169, 151, 88, 0.42);
+    border-radius: 28px;
+    color: #eee8d8;
+    background:
+        linear-gradient(145deg, rgba(24, 39, 25, 0.96), rgba(7, 17, 11, 0.97));
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.56),
+        inset 0 0 0 1px rgba(233, 218, 164, 0.04);
+    transform: translate(-50%, -50%);
+}
+
+.onboarding-rule {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.onboarding-rule::before,
+.onboarding-rule::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: rgba(207, 184, 103, 0.7);
+}
+
+.onboarding-rule span {
+    width: 6px;
+}
+
+.onboarding-kicker,
+.onboarding-count {
+    color: rgba(207, 184, 103, 0.86);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-align: center;
+}
+
+.onboarding-count {
+    margin: 24px 0 8px;
+    font-size: 10px;
+    opacity: 0.72;
+}
+
+.onboarding-step {
+    display: none;
+}
+
+.onboarding-step.active {
+    display: block;
+    animation: onboardingReveal 0.35s ease both;
+}
+
+.onboarding-step h1 {
+    margin: 0;
+    color: #f2e8c8;
+    font-size: clamp(26px, 7vw, 34px);
+    font-weight: 500;
+    line-height: 1.42;
+    text-align: center;
+}
+
+.onboarding-step > p {
+    margin: 16px auto 24px;
+    color: rgba(233, 228, 211, 0.7);
+    font-size: 14px;
+    line-height: 1.9;
+    text-align: center;
+}
+
+.onboarding-field {
+    display: grid;
+    gap: 9px;
+    color: rgba(239, 233, 214, 0.78);
+    font-size: 13px;
+}
+
+.onboarding-field input,
+.onboarding-field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid rgba(196, 174, 99, 0.35);
+    border-radius: 14px;
+    outline: none;
+    color: #f4edd8;
+    background: rgba(4, 13, 8, 0.68);
+    font: inherit;
+}
+
+.onboarding-field input:focus,
+.onboarding-field select:focus {
+    border-color: rgba(224, 203, 126, 0.72);
+    box-shadow: 0 0 0 3px rgba(196, 174, 99, 0.1);
+}
+
+.onboarding-field select option {
+    color: #101710;
+}
+
+.onboarding-note {
+    margin: 9px 0 22px !important;
+    font-size: 11px !important;
+    text-align: left !important;
+}
+
+.onboarding-primary,
+.onboarding-secondary {
+    min-height: 48px;
+    padding: 11px 18px;
+    border: 1px solid rgba(196, 174, 99, 0.44);
+    border-radius: 999px;
+    color: #f4ecd4;
+    background: linear-gradient(180deg, rgba(50, 70, 39, 0.92), rgba(23, 38, 23, 0.94));
+    font: inherit;
+    cursor: pointer;
+}
+
+.onboarding-step > .onboarding-primary {
+    width: 100%;
+}
+
+.onboarding-secondary {
+    background: rgba(9, 20, 12, 0.62);
+}
+
+.onboarding-actions {
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+@keyframes onboardingReveal {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}

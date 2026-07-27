@@ -4,6 +4,8 @@
 //========================
 
 const SENDA_SETTINGS_KEY = "sendaSettings";
+const SENDA_ONBOARDING_KEY = "sendaOnboardingCompleted";
+const hadStoredSendaSettings = localStorage.getItem(SENDA_SETTINGS_KEY) !== null;
 const SENDA_PREFECTURES = [
     ["hokkaido", "北海道", 43.0618, 141.3545],
     ["aomori", "青森県", 40.8244, 140.7400],
@@ -55,7 +57,7 @@ const SENDA_PREFECTURES = [
 ].map(([id, label, latitude, longitude]) => ({ id, label, latitude, longitude }));
 
 const sendaDefaultSettings = {
-    userName: "レイ",
+    userName: "きみ",
     weatherPrefecture: "osaka",
     idleFrequency: "normal",
     playerBirthdayMonth: null,
@@ -72,7 +74,7 @@ function loadSendaSettings() {
         return {
             ...sendaDefaultSettings,
             ...(saved && typeof saved === "object" ? saved : {}),
-            userName: String(saved?.userName || "レイ").trim() || "レイ",
+            userName: String(saved?.userName || "きみ").trim() || "きみ",
             weatherPrefecture: SENDA_PREFECTURES.some(item => item.id === saved?.weatherPrefecture)
                 ? saved.weatherPrefecture
                 : "osaka",
@@ -89,6 +91,8 @@ function loadSendaSettings() {
 
 let sendaSettings = loadSendaSettings();
 let lastSavedUserName = sendaSettings.userName;
+let sendaOnboardingPending = !hadStoredSendaSettings
+    && localStorage.getItem(SENDA_ONBOARDING_KEY) !== "true";
 
 const userNameInput = document.getElementById("userNameInput");
 const weatherPrefectureInput = document.getElementById("weatherPrefecture");
@@ -99,6 +103,13 @@ const playerBirthdayMonthInput = document.getElementById("playerBirthdayMonth");
 const playerBirthdayDayInput = document.getElementById("playerBirthdayDay");
 const clearPlayerBirthdayButton = document.getElementById("clearPlayerBirthday");
 const frequencyInputs = Array.from(document.querySelectorAll('input[name="idleFrequency"]'));
+const onboarding = document.getElementById("sendaOnboarding");
+const onboardingForm = document.getElementById("sendaOnboardingForm");
+const onboardingNameInput = document.getElementById("onboardingName");
+const onboardingPrefectureInput = document.getElementById("onboardingPrefecture");
+const onboardingNextButton = document.getElementById("onboardingNext");
+const onboardingBackButton = document.getElementById("onboardingBack");
+const onboardingSteps = Array.from(document.querySelectorAll("[data-onboarding-step]"));
 
 function saveSendaSettings() {
     localStorage.setItem(SENDA_SETTINGS_KEY, JSON.stringify(sendaSettings));
@@ -110,7 +121,7 @@ function getSendaWeatherLocation() {
 }
 
 function getSendaUserName() {
-    return sendaSettings.userName || "レイ";
+    return sendaSettings.userName || "きみ";
 }
 
 function personalizeSendaText(text) {
@@ -185,7 +196,7 @@ function fillSettingsForm() {
 function readSettingsForm() {
     const selected = frequencyInputs.find(input => input.checked);
     return {
-        userName: String(userNameInput?.value || "レイ").trim() || "レイ",
+        userName: String(userNameInput?.value || "きみ").trim() || "きみ",
         weatherPrefecture: SENDA_PREFECTURES.some(item => item.id === weatherPrefectureInput?.value)
             ? weatherPrefectureInput.value
             : "osaka",
@@ -193,6 +204,63 @@ function readSettingsForm() {
         playerBirthdayMonth: Number(playerBirthdayMonthInput?.value) || null,
         playerBirthdayDay: Number(playerBirthdayDayInput?.value) || null
     };
+}
+
+function fillPrefectureSelect(select, selectedId) {
+    if (!select) return;
+    select.replaceChildren(...SENDA_PREFECTURES.map(function (prefecture) {
+        const option = document.createElement("option");
+        option.value = prefecture.id;
+        option.textContent = prefecture.label;
+        return option;
+    }));
+    select.value = SENDA_PREFECTURES.some(item => item.id === selectedId)
+        ? selectedId
+        : "osaka";
+}
+
+function showOnboardingStep(stepName) {
+    onboardingSteps.forEach(function (step) {
+        const isActive = step.dataset.onboardingStep === stepName;
+        step.classList.toggle("active", isActive);
+        step.setAttribute("aria-hidden", String(!isActive));
+    });
+
+}
+
+function openSendaOnboarding() {
+    if (!onboarding || !sendaOnboardingPending) return;
+    onboardingNameInput.value = "";
+    fillPrefectureSelect(onboardingPrefectureInput, sendaSettings.weatherPrefecture);
+    showOnboardingStep("name");
+    onboarding.hidden = false;
+    document.body.classList.add("onboarding-open");
+}
+
+function completeSendaOnboarding() {
+    const oldName = lastSavedUserName;
+    const selectedPrefecture = onboardingPrefectureInput?.value;
+
+    sendaSettings = {
+        ...sendaSettings,
+        userName: String(onboardingNameInput?.value || "").trim() || "きみ",
+        weatherPrefecture: SENDA_PREFECTURES.some(item => item.id === selectedPrefecture)
+            ? selectedPrefecture
+            : "osaka"
+    };
+
+    window.sendaSettings = sendaSettings;
+    lastSavedUserName = sendaSettings.userName;
+    sendaOnboardingPending = false;
+    saveSendaSettings();
+    localStorage.setItem(SENDA_ONBOARDING_KEY, "true");
+    fillSettingsForm();
+    updateVisibleName(oldName, sendaSettings.userName);
+    onboarding.hidden = true;
+    document.body.classList.remove("onboarding-open");
+
+    window.dispatchEvent(new CustomEvent("senda-settings-changed", { detail: sendaSettings }));
+    window.dispatchEvent(new CustomEvent("senda-onboarding-complete", { detail: sendaSettings }));
 }
 
 function showSaved(text) {
@@ -245,10 +313,28 @@ clearPlayerBirthdayButton?.addEventListener("click", function () {
 if (userNameInput) userNameInput.addEventListener("keydown", event => {
     if (event.key === "Enter") commitSettings();
 });
+onboardingNextButton?.addEventListener("click", () => showOnboardingStep("weather"));
+onboardingBackButton?.addEventListener("click", () => showOnboardingStep("name"));
+onboardingNameInput?.addEventListener("keydown", function (event) {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    showOnboardingStep("weather");
+});
+onboardingForm?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    completeSendaOnboarding();
+});
 
 fillSettingsForm();
 saveSendaSettings();
 
+if (hadStoredSendaSettings) {
+    localStorage.setItem(SENDA_ONBOARDING_KEY, "true");
+} else if (sendaOnboardingPending) {
+    requestAnimationFrame(openSendaOnboarding);
+}
+
 window.sendaSettings = sendaSettings;
 window.getSendaUserName = getSendaUserName;
 window.personalizeSendaText = personalizeSendaText;
+window.isSendaOnboardingPending = () => sendaOnboardingPending;

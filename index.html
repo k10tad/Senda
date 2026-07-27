@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=25">
     <link rel="stylesheet" href="style-room-refresh.css?v=5">
 </head>
 
@@ -37,6 +37,39 @@
     </div>
 
     <button id="skipSplash" class="skip-splash" type="button" aria-label="起動画面をスキップ">Skip</button>
+</div>
+
+<div id="sendaOnboarding" class="senda-onboarding" hidden role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+    <form id="sendaOnboardingForm" class="senda-onboarding-card">
+        <div class="onboarding-rule" aria-hidden="true"><span></span></div>
+        <div class="onboarding-kicker">FIRST MEETING</div>
+
+        <section class="onboarding-step active" data-onboarding-step="name">
+            <div class="onboarding-count">01 / 02</div>
+            <h1 id="onboardingTitle">なんて呼べばええ？</h1>
+            <p>一緒に生活してくんやし、フランクなんがええな～。ちなみに後からでもSettingsで変えれるで。</p>
+            <label class="onboarding-field" for="onboardingName">
+                <span>呼んでほしい名前</span>
+                <input id="onboardingName" type="text" maxlength="24" autocomplete="nickname" placeholder="名前を入力">
+            </label>
+            <p class="onboarding-note">あ、空欄やったら「きみ」な。</p>
+            <button id="onboardingNext" class="onboarding-primary" type="button">次へ</button>
+        </section>
+
+        <section class="onboarding-step" data-onboarding-step="weather" aria-hidden="true">
+            <div class="onboarding-count">02 / 02</div>
+            <h1>どこの空を見とこか？</h1>
+            <p>気象情報を見張る地域選んどって。まあ画面の街名はMadridのままやけどな。</p>
+            <label class="onboarding-field" for="onboardingPrefecture">
+                <span>観測する都道府県</span>
+                <select id="onboardingPrefecture"></select>
+            </label>
+            <div class="onboarding-actions">
+                <button id="onboardingBack" class="onboarding-secondary" type="button">戻る</button>
+                <button class="onboarding-primary" type="submit">Sendaを始める</button>
+            </div>
+        </section>
+    </form>
 </div>
 
 <div class="moonlight-sky" aria-hidden="true">
@@ -227,7 +260,7 @@
 
             <label class="settings-field" for="userNameInput">
                 <span>ハリーに呼んでほしい名前</span>
-                <input id="userNameInput" type="text" maxlength="24" autocomplete="nickname" placeholder="レイ">
+                <input id="userNameInput" type="text" maxlength="24" autocomplete="nickname" placeholder="名前を入力">
             </label>
         </section>
 
@@ -435,7 +468,7 @@
 <script src="js/message.js?v=13"></script>
 <script src="js/sound.js?v=18"></script>
 <script src="js/voice.js?v=2"></script>
-<script src="js/settings.js?v=3"></script>
+<script src="js/settings.js?v=5"></script>
 <script src="js/companion-days.js?v=1"></script>
 <script src="js/birthday.js?v=1"></script>
 <script src="js/huella.js?v=3"></script>
@@ -451,7 +484,7 @@
 <script src="js/navigation.js?v=4"></script>
 <script src="js/companion-engine.js?v=5"></script>
 <script>window.USE_COMPANION_ENGINE=true;</script>
-<script src="js/main.js?v=5"></script>
+<script src="js/main.js?v=6"></script>
  
 </body>
 </html>
