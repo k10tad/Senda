@@ -1,0 +1,429 @@
+/* Senda room UI refresh */
+
+body {
+    background: #080d08;
+}
+
+.moonlight-sky {
+    background: #080d08 !important;
+    isolation: isolate;
+    transition: none;
+}
+
+.moonlight-sky::before,
+.moonlight-sky::after {
+    content: "";
+    position: absolute;
+    inset: -2%;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    pointer-events: none;
+    transform: scale(1.02);
+    transition: opacity .72s ease;
+    animation: none !important;
+}
+
+.moonlight-sky::before {
+    z-index: 0;
+    opacity: 1;
+    background-image:
+        linear-gradient(180deg, rgba(6, 12, 8, .60), rgba(13, 22, 14, .69) 48%, rgba(4, 9, 6, .84)),
+        url("./assets/background/harry-livingroom.jpg");
+}
+
+.moonlight-sky::after {
+    z-index: 1;
+    opacity: 0;
+    background-image:
+        linear-gradient(180deg, rgba(6, 12, 8, .38), rgba(12, 21, 14, .53) 48%, rgba(4, 9, 6, .76)),
+        url("./assets/background/harry-bedroom.jpg");
+}
+
+body[data-senda-page="sleep"] .moonlight-sky::before {
+    opacity: 0;
+}
+
+body[data-senda-page="sleep"] .moonlight-sky::after {
+    opacity: 1;
+}
+
+body[data-senda-page="settings"] .moonlight-sky::before {
+    opacity: .62;
+}
+
+body[data-senda-page="settings"] .moonlight-sky::after {
+    opacity: 0;
+}
+
+.weather-veil {
+    z-index: 2;
+}
+
+.senda-home {
+    min-height: 100dvh;
+    background: transparent !important;
+}
+
+.senda-presence #harry,
+#sleepHarry {
+    animation: none;
+}
+
+.senda-presence #message,
+.sleep-message {
+    box-sizing: border-box;
+    min-height: 0;
+    height: auto;
+    padding: 16px 18px;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background: rgba(9, 15, 9, .90) !important;
+    border: 1px solid rgba(201, 169, 103, .21) !important;
+    border-radius: 15px;
+    backdrop-filter: blur(12px) saturate(88%);
+    -webkit-backdrop-filter: blur(12px) saturate(88%);
+}
+
+.senda-presence #message {
+    width: min(100%, 660px);
+    margin-top: 14px;
+}
+
+.sleep-message {
+    width: 100%;
+    margin-top: 13px;
+    text-shadow: none;
+}
+
+.senda-dashboard {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.senda-dashboard::before,
+.senda-dashboard::after {
+    display: none !important;
+}
+
+.home-brand {
+    margin: 0 auto 22px;
+    text-align: center;
+}
+
+.home-brand-kicker {
+    color: var(--brass-300);
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: .34em;
+}
+
+.senda-dashboard .home-brand h1 {
+    margin: 3px 0 4px;
+    font-size: clamp(38px, 6vw, 56px);
+}
+
+.home-context {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    color: rgba(238, 232, 216, .62);
+    font-family: var(--font-numeric);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.home-context #city {
+    margin: 0;
+    color: var(--brass-300) !important;
+    font-size: inherit;
+    letter-spacing: .18em;
+}
+
+.home-context #date {
+    margin: 0;
+    opacity: 1;
+    font-size: inherit;
+    letter-spacing: .08em;
+}
+
+.weather-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+        "icon temperature pressure"
+        "icon level humidity"
+        "comment comment comment";
+    column-gap: 14px;
+    row-gap: 4px;
+    width: min(100%, 500px) !important;
+    margin: 0 auto 20px !important;
+    padding: 18px 20px !important;
+    text-align: left !important;
+    border-radius: 18px !important;
+    background: rgba(9, 16, 10, .84) !important;
+    backdrop-filter: blur(14px) saturate(88%);
+    -webkit-backdrop-filter: blur(14px) saturate(88%);
+}
+
+.weather-card #weather-icon {
+    grid-area: icon;
+    align-self: center;
+    font-size: 36px;
+}
+
+.weather-card #temperature {
+    grid-area: temperature;
+    align-self: end;
+    margin: 0;
+    font-size: 29px;
+}
+
+.weather-card #pressure {
+    grid-area: pressure;
+    align-self: end;
+    margin: 0;
+    font-size: 13px;
+    text-align: right;
+}
+
+.weather-card #pressure-level {
+    grid-area: level;
+    margin: 0;
+    font-size: 14px;
+}
+
+.weather-card #humidity {
+    grid-area: humidity;
+    margin: 0;
+    align-self: center;
+    text-align: right;
+    font-size: 12px;
+}
+
+.weather-card #weather-comment {
+    grid-area: comment;
+    margin: 9px 0 0;
+    padding-top: 9px;
+    border-top: 1px solid rgba(201, 169, 103, .10);
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.senda-dashboard .session-card,
+.sleep-panel,
+.alarm-panel {
+    border-radius: 18px !important;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .018), transparent 35%),
+        rgba(9, 16, 10, .87) !important;
+}
+
+.senda-dashboard .session-card {
+    padding: 22px !important;
+}
+
+.sleep-page-shell {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.sleep-page-shell::after {
+    display: none !important;
+}
+
+.sleep-panel,
+.alarm-panel {
+    padding: 22px;
+}
+
+.sleep-counter {
+    margin: 24px 0 8px;
+    font-size: clamp(42px, 9vw, 62px);
+}
+
+.sleep-buttons {
+    margin-top: 20px;
+}
+
+.alarm-time-row,
+.alarm-toggle-row {
+    margin-top: 12px;
+    padding: 13px 0;
+}
+
+#alarmTime {
+    width: 116px;
+    padding: 8px 10px;
+    font-size: 18px;
+}
+
+.alarm-panel > button {
+    margin-top: 17px;
+}
+
+.alarm-status {
+    margin-top: 14px;
+}
+
+.senda-side-rail {
+    top: max(10px, env(safe-area-inset-top)) !important;
+    right: max(10px, env(safe-area-inset-right)) !important;
+    left: auto;
+    bottom: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+    max-height: none;
+    transform: none;
+}
+
+.huella-book-button,
+.companion-day-badge {
+    width: auto;
+    min-width: 88px;
+    min-height: 46px;
+    height: 46px;
+    padding: 7px 12px;
+    border-radius: 13px;
+    background: linear-gradient(145deg, rgba(53, 66, 41, .96), rgba(20, 28, 18, .96)) !important;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(240, 223, 176, .08);
+}
+
+.huella-book-button::before,
+.huella-book-ribbon,
+.huella-book-mark {
+    display: none;
+}
+
+.huella-book-title {
+    margin: 0;
+    writing-mode: horizontal-tb;
+    font-size: 14px;
+    line-height: 30px;
+    letter-spacing: .08em;
+}
+
+.companion-day-badge {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    align-items: baseline;
+    gap: 4px;
+    color: #eadbb7 !important;
+    text-shadow: none;
+}
+
+.companion-day-badge span,
+.companion-day-badge small,
+.companion-day-badge strong {
+    display: inline;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.companion-day-badge strong {
+    color: var(--brass-100);
+    font-family: var(--font-numeric);
+    font-size: 20px;
+}
+
+.companion-day-detail {
+    top: 56px;
+    right: 0;
+    bottom: auto;
+    width: min(260px, calc(100vw - 24px));
+}
+
+.bottom-nav {
+    padding: 6px;
+    border-radius: 18px;
+}
+
+.bottom-nav .nav-button {
+    min-height: 58px;
+    padding: 24px 10px 8px;
+}
+
+@media screen and (min-width: 901px) {
+    .senda-home {
+        padding-top: max(88px, calc(env(safe-area-inset-top) + 70px));
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .senda-home,
+    .sleep-page-shell,
+    .settings-page-shell {
+        padding-top: max(78px, calc(env(safe-area-inset-top) + 64px));
+    }
+
+    .senda-home {
+        gap: 28px;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .senda-home {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .senda-presence #harry {
+        border-radius: 20px;
+    }
+
+    .senda-presence #message {
+        width: 100%;
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .weather-card {
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "icon temperature"
+            "icon level"
+            "pressure humidity"
+            "comment comment";
+        column-gap: 12px;
+        padding: 16px !important;
+    }
+
+    .weather-card #pressure {
+        text-align: left;
+    }
+
+    .senda-dashboard .session-card,
+    .sleep-panel,
+    .alarm-panel {
+        padding: 18px !important;
+    }
+
+    .sleep-page-header {
+        margin-bottom: 20px;
+    }
+
+    .sleep-page-header h1 {
+        font-size: 42px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .moonlight-sky::before,
+    .moonlight-sky::after {
+        transition: none;
+    }
+}

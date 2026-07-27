@@ -3,7 +3,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Senda</title>
     <meta name="apple-mobile-web-app-title" content="Senda">
     <meta name="application-name" content="Senda">
@@ -14,10 +14,11 @@
     <link rel="apple-touch-icon" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
-    <link rel="stylesheet" href="style.css?v=22">
+    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style-room-refresh.css?v=1">
 </head>
 
-<body class="splash-active">
+<body class="splash-active" data-senda-page="home">
 
 <div id="sendaSplash" class="senda-splash" role="dialog" aria-label="Sendaを起動しています" aria-modal="true">
     <div class="splash-ambient" aria-hidden="true"></div>
@@ -85,14 +86,14 @@
                 <span></span><span></span><span></span>
             </div>
 
-            <h1>Senda</h1>
-
-            <div class="clock-card">
-                <div class="line"></div>
-                <div id="city">Madrid</div>
-                <div id="clock"></div>
-                <div id="date"></div>
-                <div class="line"></div>
+            <div class="home-brand">
+                <div class="home-brand-kicker">SENDA</div>
+                <h1>Senda</h1>
+                <div class="home-context">
+                    <span id="city">Madrid</span>
+                    <span aria-hidden="true">·</span>
+                    <span id="date"></span>
+                </div>
             </div>
 
             <div id="weather-card" class="weather-card">
@@ -446,12 +447,11 @@
 <script src="js/mood.js?v=3"></script>
 <script src="js/memory.js"></script>
 <script src="js/weather.js?v=3"></script>
-<script src="js/clock.js"></script>
-<script src="js/navigation.js?v=2"></script>
+<script src="js/clock.js?v=2"></script>
+<script src="js/navigation.js?v=3"></script>
 <script src="js/companion-engine.js?v=5"></script>
 <script>window.USE_COMPANION_ENGINE=true;</script>
-<script src="js/main.js?v=4"></script>
+<script src="js/main.js?v=5"></script>
  
 </body>
 </html>
- 

@@ -31,6 +31,8 @@ function showSendaPage(pageName, options = {}) {
         );
     });
 
+    document.body.dataset.sendaPage = pageName;
+
     if (isActualChange && options.silent !== true) {
         if (typeof playPageStepSound === "function") {
             playPageStepSound();

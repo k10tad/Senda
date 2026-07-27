@@ -4,8 +4,7 @@
 
 restoreWorkSession();
 
-updateClock();
-setInterval(updateClock, 1000);
+updateSendaDate();
 
 loadWeather();
 
