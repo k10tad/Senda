@@ -5,9 +5,15 @@ body {
 }
 
 .moonlight-sky {
+    z-index: 0;
     background: #080d08 !important;
     isolation: isolate;
     transition: none;
+}
+
+#appPages {
+    position: relative;
+    z-index: 2;
 }
 
 .moonlight-sky::before,
@@ -277,76 +283,6 @@ body[data-senda-page="settings"] .moonlight-sky::after {
     margin-top: 14px;
 }
 
-.senda-side-rail {
-    top: max(10px, env(safe-area-inset-top)) !important;
-    right: max(10px, env(safe-area-inset-right)) !important;
-    left: auto;
-    bottom: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 8px;
-    max-height: none;
-    transform: none;
-}
-
-.huella-book-button,
-.companion-day-badge {
-    width: auto;
-    min-width: 88px;
-    min-height: 46px;
-    height: 46px;
-    padding: 7px 12px;
-    border-radius: 13px;
-    background: linear-gradient(145deg, rgba(53, 66, 41, .96), rgba(20, 28, 18, .96)) !important;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(240, 223, 176, .08);
-}
-
-.huella-book-button::before,
-.huella-book-ribbon,
-.huella-book-mark {
-    display: none;
-}
-
-.huella-book-title {
-    margin: 0;
-    writing-mode: horizontal-tb;
-    font-size: 14px;
-    line-height: 30px;
-    letter-spacing: .08em;
-}
-
-.companion-day-badge {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    align-items: baseline;
-    gap: 4px;
-    color: #eadbb7 !important;
-    text-shadow: none;
-}
-
-.companion-day-badge span,
-.companion-day-badge small,
-.companion-day-badge strong {
-    display: inline;
-    margin: 0;
-    font-size: 11px;
-    line-height: 1;
-}
-
-.companion-day-badge strong {
-    color: var(--brass-100);
-    font-family: var(--font-numeric);
-    font-size: 20px;
-}
-
-.companion-day-detail {
-    top: 56px;
-    right: 0;
-    bottom: auto;
-    width: min(260px, calc(100vw - 24px));
-}
-
 .bottom-nav {
     padding: 6px;
     border-radius: 18px;
@@ -359,15 +295,18 @@ body[data-senda-page="settings"] .moonlight-sky::after {
 
 @media screen and (min-width: 901px) {
     .senda-home {
-        padding-top: max(88px, calc(env(safe-area-inset-top) + 70px));
+        padding-top: max(38px, calc(env(safe-area-inset-top) + 24px));
     }
 }
 
 @media screen and (max-width: 900px) {
-    .senda-home,
+    .senda-home {
+        padding-top: max(18px, calc(env(safe-area-inset-top) + 12px));
+    }
+
     .sleep-page-shell,
     .settings-page-shell {
-        padding-top: max(78px, calc(env(safe-area-inset-top) + 64px));
+        padding-top: max(28px, calc(env(safe-area-inset-top) + 18px));
     }
 
     .senda-home {
