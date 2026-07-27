@@ -36,7 +36,7 @@ function setSessionCompanionImage(state) {
     const images = window.SENDA_IMAGES || {};
     const imageByState = {
         work: images.work || "assets/companion-work.jpg",
-        break: images.normal || "assets/companion-welcome.jpg",
+        break: images.break || "assets/companion-break.jpg",
         idle: images.normal || "assets/companion-welcome.jpg"
     };
 

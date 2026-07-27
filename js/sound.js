@@ -9,6 +9,7 @@ const SENDA_FIXED_BGM_VOLUME = 0.18;
 const SENDA_FIXED_LIVING_VOLUME = 0.15;
 const SENDA_FIXED_SLEEP_VOLUME = 0.78;
 const SENDA_FIXED_SLEEP_DEEP_BREATH_VOLUME = 0.045;
+const SENDA_FIXED_HEARTBEAT_VOLUME = 0.58;
 
 const sendaAudio = {
     workBgm: new Audio("sound/BGM.mp3"),
@@ -21,6 +22,7 @@ const sendaAudio = {
     throat: new Audio("sound/throat.mp3"),
     step: new Audio("sound/step.mp3"),
     sleepBreath: new Audio("sound/sleep-breath.mp3"),
+    heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
 };
 
@@ -28,6 +30,7 @@ sendaAudio.workBgm.loop = true;
 sendaAudio.breakBgm.loop = true;
 sendaAudio.clock.loop = true;
 sendaAudio.sleepBreath.loop = true;
+sendaAudio.heartbeat.loop = true;
 sendaAudio.alarm.loop = true;
 
 Object.values(sendaAudio).forEach(function (audio) {
@@ -42,6 +45,7 @@ let gearTimer = null;
 let sleepDeepBreathTimer = null;
 let throatStopTimer = null;
 let lastLivingSound = null;
+let bedroomAmbienceEnabled = false;
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, Number(value) || 0));
@@ -62,6 +66,7 @@ function applySendaAudioSettings() {
 
     // 睡眠音はSettingsに依存させず、コード側で固定する。
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
+    sendaAudio.heartbeat.volume = SENDA_FIXED_HEARTBEAT_VOLUME;
     sendaAudio.breath.volume = audioMode === "sleep"
         ? SENDA_FIXED_SLEEP_DEEP_BREATH_VOLUME
         : living * 0.86;
@@ -109,6 +114,34 @@ function clearAudioTimers() {
 
 function stopAllAudioElements() {
     Object.values(sendaAudio).forEach(audio => stopAudio(audio));
+}
+
+function syncBedroomHeartbeat() {
+    const shouldPlay = bedroomAmbienceEnabled
+        && audioUnlocked
+        && audioMode !== "alarm";
+
+    if (!shouldPlay) {
+        stopAudio(sendaAudio.heartbeat);
+        return;
+    }
+
+    applySendaAudioSettings();
+    if (sendaAudio.heartbeat.paused) {
+        safePlay(sendaAudio.heartbeat);
+    }
+}
+
+function setBedroomAmbience(enabled) {
+    bedroomAmbienceEnabled = Boolean(enabled);
+
+    if (!bedroomAmbienceEnabled) {
+        stopAudio(sendaAudio.heartbeat);
+        return;
+    }
+
+    unlockAudio();
+    syncBedroomHeartbeat();
 }
 
 function randomBetween(min, max) {
@@ -209,12 +242,16 @@ function setMode(nextMode) {
     } else if (nextMode === "alarm") {
         safePlay(sendaAudio.alarm);
     }
+
+    syncBedroomHeartbeat();
 }
 
 function unlockAudio() {
     if (audioUnlocked) {
         if (desiredAudioMode !== "idle" && audioMode !== desiredAudioMode) {
             setMode(desiredAudioMode);
+        } else {
+            syncBedroomHeartbeat();
         }
         return;
     }
@@ -229,7 +266,11 @@ function unlockAudio() {
         setTimeout(function () {
             stopAudio(sendaAudio.alarm);
             sendaAudio.alarm.volume = previous;
-            if (desiredAudioMode !== "idle") setMode(desiredAudioMode);
+            if (desiredAudioMode !== "idle") {
+                setMode(desiredAudioMode);
+            } else {
+                syncBedroomHeartbeat();
+            }
         }, 40);
     });
 }

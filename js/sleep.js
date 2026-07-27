@@ -14,6 +14,7 @@ window.SENDA_IMAGES = {
     normal: "assets/companion-welcome.jpg",
     morning: "assets/companion-morning.jpg",
     work: "assets/companion-work.jpg",
+    break: "assets/companion-break.jpg",
     bedtime: "assets/companion-bedtime.jpg",
     sleeping: "assets/companion-sleep.jpg"
 };

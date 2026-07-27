@@ -33,6 +33,10 @@ function showSendaPage(pageName, options = {}) {
 
     document.body.dataset.sendaPage = pageName;
 
+    if (typeof setBedroomAmbience === "function") {
+        setBedroomAmbience(pageName === "sleep");
+    }
+
     if (isActualChange && options.silent !== true) {
         if (typeof playPageStepSound === "function") {
             playPageStepSound();
