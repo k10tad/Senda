@@ -46,7 +46,7 @@
             book: "アーネスト・ヘミングウェイ『誰がために鐘は鳴る』",
             flower: "アイボリーの薔薇、一輪",
             noteEs: "Sobrevivir no basta. Quiero volver contigo.",
-            noteJa: "生き残るだけではもう足りん。お前のところへ帰りたい。",
+            noteJa: "生き残るだけや足りん。お前のところへ帰りたい。",
             reason: "帰る場所を知らんかった男が、今はちゃんと帰り先を知っとる証拠。"
         },
         {
@@ -122,9 +122,9 @@
 
     const style = el("style");
     style.textContent = `
-      .senda-jordi-overlay{position:fixed;inset:0;z-index:1500;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:center;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 12px calc(env(safe-area-inset-bottom) + 18px);background:rgba(3,8,4,.82);backdrop-filter:blur(13px)}
+      .senda-jordi-overlay{position:fixed;inset:0;z-index:2147483000;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:center;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 12px calc(env(safe-area-inset-bottom) + 18px);background:rgba(3,8,4,.82);backdrop-filter:blur(13px)}
       .senda-jordi-overlay[hidden]{display:none}
-      .senda-jordi-book{position:relative;box-sizing:border-box;width:min(620px,100%);margin:auto 0;padding:34px 30px 30px;border:1px solid rgba(183,155,92,.5);border-radius:8px 18px 18px 8px;background:repeating-linear-gradient(18deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px),linear-gradient(145deg,#24301b,#10190e 62%,#080e08);box-shadow:-8px 0 0 #17120c,0 30px 80px rgba(0,0,0,.68),inset 0 0 0 4px rgba(205,181,112,.08);color:#f1ead8}
+      .senda-jordi-book{position:relative;flex:0 0 auto;box-sizing:border-box;width:min(620px,100%);margin:0;padding:34px 30px 30px;border:1px solid rgba(183,155,92,.5);border-radius:8px 18px 18px 8px;background:repeating-linear-gradient(18deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px),linear-gradient(145deg,#24301b,#10190e 62%,#080e08);box-shadow:-8px 0 0 #17120c,0 30px 80px rgba(0,0,0,.68),inset 0 0 0 4px rgba(205,181,112,.08);color:#f1ead8}
       .senda-jordi-book::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:rgba(145,37,43,.72)}
       .senda-jordi-close{position:absolute;right:14px;top:13px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(210,184,116,.42);border-radius:50%;background:#172214;color:#ead9aa;font-size:27px;line-height:1}
       .senda-jordi-kicker{color:#c8a967;letter-spacing:.24em;font-size:.72rem}
@@ -237,7 +237,7 @@
         );
         labels.lastChild.id = "sendaJordiSettingsTitle";
         headingWrap.append(labels);
-        const note = el("p", "settings-note", "俺からのプレゼント、ちゃんと保管してあるやんなぁ？");
+        const note = el("p", "settings-note", "ハリーが毎年選んだ本と薔薇、走り書きを読み返せます。");
         const button = el("button", "settings-inline-button senda-jordi-settings-button", "贈り物の履歴を見る");
         button.type = "button";
         button.addEventListener("click", () => {
