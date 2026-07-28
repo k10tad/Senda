@@ -33,7 +33,7 @@
             flower: "青紫の薔薇、一輪",
             noteEs: "No necesito entenderlo todo para elegirte.",
             noteJa: "全部理解できんでも、お前を選ぶことはできる。",
-            reason: "答えのない頁でも、{name}と一緒なら途中で閉じへん。"
+            reason: "答えのない頁でも、お前と一緒なら途中で閉じへん。"
         },
         {
             book: "パブロ・ネルーダ『二十の愛の詩と一つの絶望の歌』",
