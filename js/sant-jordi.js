@@ -33,7 +33,7 @@
             flower: "青紫の薔薇、一輪",
             noteEs: "No necesito entenderlo todo para elegirte.",
             noteJa: "全部理解できんでも、お前を選ぶことはできる。",
-            reason: "答えのない頁でも、お前と一緒なら途中で閉じへん。"
+            reason: "答えのない頁でも、mi vidaと一緒なら途中で閉じへん。"
         },
         {
             book: "パブロ・ネルーダ『二十の愛の詩と一つの絶望の歌』",
@@ -122,9 +122,9 @@
 
     const style = el("style");
     style.textContent = `
-      .senda-jordi-overlay{position:fixed;inset:0;z-index:2147483000;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:center;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 12px calc(env(safe-area-inset-bottom) + 18px);background:rgba(3,8,4,.82);backdrop-filter:blur(13px)}
+      .senda-jordi-overlay{position:fixed;inset:0;z-index:2147483000;box-sizing:border-box;display:block;overflow:hidden;background:rgba(3,8,4,.82);backdrop-filter:blur(13px)}
       .senda-jordi-overlay[hidden]{display:none}
-      .senda-jordi-book{position:relative;flex:0 0 auto;box-sizing:border-box;width:min(620px,100%);margin:0;padding:34px 30px 30px;border:1px solid rgba(183,155,92,.5);border-radius:8px 18px 18px 8px;background:repeating-linear-gradient(18deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px),linear-gradient(145deg,#24301b,#10190e 62%,#080e08);box-shadow:-8px 0 0 #17120c,0 30px 80px rgba(0,0,0,.68),inset 0 0 0 4px rgba(205,181,112,.08);color:#f1ead8}
+      .senda-jordi-book{position:fixed;top:calc(env(safe-area-inset-top) + 18px);bottom:calc(env(safe-area-inset-bottom) + 18px);left:50%;box-sizing:border-box;width:calc(100% - 24px);max-width:620px;margin:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:34px 30px 30px;transform:translateX(-50%);border:1px solid rgba(183,155,92,.5);border-radius:8px 18px 18px 8px;background:repeating-linear-gradient(18deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px),linear-gradient(145deg,#24301b,#10190e 62%,#080e08);box-shadow:-8px 0 0 #17120c,0 30px 80px rgba(0,0,0,.68),inset 0 0 0 4px rgba(205,181,112,.08);color:#f1ead8}
       .senda-jordi-book::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:rgba(145,37,43,.72)}
       .senda-jordi-close{position:absolute;right:14px;top:13px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(210,184,116,.42);border-radius:50%;background:#172214;color:#ead9aa;font-size:27px;line-height:1}
       .senda-jordi-kicker{color:#c8a967;letter-spacing:.24em;font-size:.72rem}
@@ -193,7 +193,7 @@
             button.addEventListener("click", () => {
                 renderGift(record);
                 renderHistory(record.year);
-                overlay.scrollTop = 0;
+                book.scrollTop = 0;
             });
             historyArea.append(button);
         });
@@ -212,9 +212,12 @@
         renderGift(record);
         renderHistory(record?.year);
         overlay.hidden = false;
-        overlay.scrollTop = 0;
+        book.scrollTop = 0;
         document.body.style.overflow = "hidden";
-        requestAnimationFrame(() => { overlay.scrollTop = 0; });
+        requestAnimationFrame(() => {
+            book.scrollTop = 0;
+            requestAnimationFrame(() => { book.scrollTop = 0; });
+        });
     }
 
     function closeGift() {
