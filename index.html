@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
     <link rel="stylesheet" href="style.css?v=25">
-    <link rel="stylesheet" href="style-room-refresh.css?v=5">
+    <link rel="stylesheet" href="style-room-refresh.css?v=6">
 </head>
 
 <body class="splash-active" data-senda-page="home">
@@ -275,7 +275,7 @@
                 <select id="weatherPrefecture" aria-describedby="weatherLocationNote"></select>
             </label>
             <p id="weatherLocationNote" class="settings-note">
-                天気・気圧は選択地域の代表地点から取得します。ホームの表記はMADRID。
+                気象情報は選択地域の代表地点から取得します。ホームの表記はMADRID。
             </p>
         </section>
 
@@ -330,7 +330,7 @@
                 <div class="settings-label">BACKUP</div>
                 <h2 id="backupSettingsTitle">Sendaの保管と復元</h2>
             </div>
-            <p class="settings-note">設定・記録・寄り添い日数・Huellaの思い出を、ひとつのZIPに保存。</p>
+            <p class="settings-note">設定・記録・寄り添い日数・Huellaの思い出をZIPに保存。</p>
             <div class="backup-actions">
                 <button id="exportSendaBackup" type="button">バックアップを作成</button>
                 <button id="restoreSendaBackup" class="quiet-button" type="button">バックアップから復元</button>
@@ -466,11 +466,13 @@
 <script src="js/background.js?v=2"></script>
 <script src="js/companion-dialogues.js?v=9"></script>
 <script src="js/message.js?v=13"></script>
-<script src="js/sound.js?v=18"></script>
-<script src="js/voice.js?v=2"></script>
+<script src="js/sound.js?v=19"></script>
+<script src="js/typewriter.js?v=1"></script>
+<script src="js/voice.js?v=3"></script>
 <script src="js/settings.js?v=5"></script>
 <script src="js/companion-days.js?v=1"></script>
 <script src="js/birthday.js?v=1"></script>
+<script src="js/sant-jordi.js?v=1"></script>
 <script src="js/huella.js?v=3"></script>
 <script src="js/backup.js?v=2"></script>
 <script src="js/work-session.js?v=6"></script>
@@ -485,6 +487,7 @@
 <script src="js/companion-engine.js?v=5"></script>
 <script>window.USE_COMPANION_ENGINE=true;</script>
 <script src="js/main.js?v=6"></script>
+<script src="js/events.js?v=1"></script>
  
 </body>
 </html>

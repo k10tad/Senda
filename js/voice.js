@@ -124,40 +124,34 @@
 
     const lastPlayedByGroup = {};
     let currentVoice = null;
-    let resumeMode = null;
     let welcomePlayed = false;
 
-    function restoreBackgroundAudio() {
-        if (!resumeMode || resumeMode === "idle") {
-            resumeMode = null;
-            return;
+    function setBackgroundDuck(active) {
+        if (typeof setSendaVoiceDucking === "function") {
+            setSendaVoiceDucking(active);
         }
-        const mode = resumeMode;
-        resumeMode = null;
-        if (typeof setMode === "function") setMode(mode);
     }
 
-    function stopCurrentVoice() {
+    function stopCurrentVoice(restoreBgm = true) {
         if (!currentVoice) return;
         currentVoice.onended = null;
         currentVoice.onerror = null;
         currentVoice.pause();
         try { currentVoice.currentTime = 0; } catch (_) {}
         currentVoice = null;
-        restoreBackgroundAudio();
-    }
-
-    function duckBackgroundAudio() {
-        if (typeof audioMode === "undefined" || typeof setMode !== "function") return;
-        resumeMode = audioMode;
-        if (resumeMode !== "idle") setMode("idle");
+        if (restoreBgm) setBackgroundDuck(false);
     }
 
     function setSubtitle(target, text) {
         const element = typeof target === "string"
             ? document.getElementById(target)
             : target;
-        if (element) element.textContent = text;
+        if (!element) return;
+        if (window.SendaTypewriter?.show) {
+            window.SendaTypewriter.show(element, text);
+        } else {
+            element.textContent = text;
+        }
     }
 
     function getUserName() {
@@ -181,8 +175,8 @@
         };
 
         setSubtitle(target, resolvedLine.subtitle);
-        stopCurrentVoice();
-        duckBackgroundAudio();
+        stopCurrentVoice(false);
+        setBackgroundDuck(true);
 
         const audio = new Audio(VOICE_BASE_PATH + line.file);
         currentVoice = audio;
@@ -192,7 +186,7 @@
         const finish = function () {
             if (currentVoice !== audio) return;
             currentVoice = null;
-            restoreBackgroundAudio();
+            setBackgroundDuck(false);
         };
 
         audio.onended = finish;

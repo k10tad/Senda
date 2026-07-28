@@ -77,7 +77,7 @@
         if (text) {
             show(text, label);
             const homeMessage = document.getElementById("message");
-            if (homeMessage && (playerDiff === 0 || harryDiff === 0)) homeMessage.textContent = text.replace("{name}", window.getSendaUserName?.() || "レイ");
+            if (homeMessage && (playerDiff === 0 || harryDiff === 0)) homeMessage.textContent = text.replace("{name}", window.getSendaUserName?.() || "cariño");
         }
         return { harryDiff, playerDiff, harryAge: harryAge(today) };
     }

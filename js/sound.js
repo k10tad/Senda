@@ -46,6 +46,8 @@ let sleepDeepBreathTimer = null;
 let throatStopTimer = null;
 let lastLivingSound = null;
 let bedroomAmbienceEnabled = false;
+let sendaBgmDuckFactor = 1;
+let sendaBgmDuckFrame = null;
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, Number(value) || 0));
@@ -55,8 +57,8 @@ function applySendaAudioSettings() {
     const bgm = SENDA_FIXED_BGM_VOLUME;
     const living = SENDA_FIXED_LIVING_VOLUME;
 
-    sendaAudio.workBgm.volume = bgm;
-    sendaAudio.breakBgm.volume = bgm * 0.84;
+    sendaAudio.workBgm.volume = clamp01(bgm * sendaBgmDuckFactor);
+    sendaAudio.breakBgm.volume = clamp01(bgm * 0.84 * sendaBgmDuckFactor);
     sendaAudio.clock.volume = living * 0.74;
     sendaAudio.pen.volume = living;
     sendaAudio.page.volume = living * 1.12;
@@ -71,6 +73,37 @@ function applySendaAudioSettings() {
         ? SENDA_FIXED_SLEEP_DEEP_BREATH_VOLUME
         : living * 0.86;
     sendaAudio.alarm.volume = 0.48;
+}
+
+function setSendaVoiceDucking(active) {
+    const start = sendaBgmDuckFactor;
+    const target = active ? 0.3 : 1;
+    const duration = active ? 240 : 520;
+    const startedAt = performance.now();
+
+    if (sendaBgmDuckFrame !== null) {
+        cancelAnimationFrame(sendaBgmDuckFrame);
+        sendaBgmDuckFrame = null;
+    }
+
+    function step(now) {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        sendaBgmDuckFactor = start + (target - start) * eased;
+        applySendaAudioSettings();
+
+        if (progress < 1) {
+            sendaBgmDuckFrame = requestAnimationFrame(step);
+        } else {
+            sendaBgmDuckFactor = target;
+            sendaBgmDuckFrame = null;
+            applySendaAudioSettings();
+        }
+    }
+
+    sendaBgmDuckFrame = requestAnimationFrame(step);
 }
 
 function safePlay(audio) {

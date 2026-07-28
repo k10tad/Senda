@@ -112,6 +112,44 @@ body[data-senda-page="sleep"] .sleep-message {
     -webkit-backdrop-filter: blur(4px) saturate(94%);
 }
 
+/* 台詞はカードに閉じ込めず、写真の余韻へ直接置く。 */
+.senda-presence #message {
+    min-height: 4.9em;
+    padding: 18px 8px 8px;
+    text-align: center;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow:
+        0 2px 12px rgba(0, 0, 0, .96),
+        0 0 28px rgba(0, 0, 0, .72);
+}
+
+.senda-typewriter-active::after {
+    content: "";
+    display: inline-block;
+    width: .08em;
+    height: 1em;
+    margin-left: .16em;
+    vertical-align: -.08em;
+    background: currentColor;
+    opacity: .62;
+    animation: sendaTypewriterCaret .82s steps(1, end) infinite;
+}
+
+@keyframes sendaTypewriterCaret {
+    50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .senda-typewriter-active::after { display: none; }
+}
+
 .senda-dashboard {
     padding: 0 !important;
     background: transparent !important;
