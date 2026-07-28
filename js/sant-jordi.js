@@ -237,7 +237,7 @@
         );
         labels.lastChild.id = "sendaJordiSettingsTitle";
         headingWrap.append(labels);
-        const note = el("p", "settings-note", "ハリーが毎年選んだ本と薔薇、走り書きを読み返せます。");
+        const note = el("p", "settings-note", "俺からのプレゼント、ちゃんと保管してあるやんなぁ？");
         const button = el("button", "settings-inline-button senda-jordi-settings-button", "贈り物の履歴を見る");
         button.type = "button";
         button.addEventListener("click", () => {
