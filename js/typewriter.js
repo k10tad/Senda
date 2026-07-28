@@ -17,12 +17,13 @@
         return typeof target === "string" ? document.querySelector(target) : target;
     }
 
-    function waitForCharacter(character) {
-        if (/[。！？!?]/.test(character)) return 260;
-        if (/[、，,；;：:]/.test(character)) return 135;
-        if (character === "…") return 190;
-        if (character === "\n") return 150;
-        return 62;
+    function waitForCharacter(character, profile = "reading") {
+        const voice = profile === "voice";
+        if (/[。！？!?]/.test(character)) return voice ? 260 : 340;
+        if (/[、，,；;：:]/.test(character)) return voice ? 135 : 175;
+        if (character === "…") return voice ? 190 : 250;
+        if (character === "\n") return voice ? 150 : 210;
+        return voice ? 62 : 88;
     }
 
     function write(element, value) {
@@ -70,7 +71,7 @@
                     return;
                 }
 
-                const delay = options.speed || waitForCharacter(fullText[index - 1]);
+                const delay = options.speed || waitForCharacter(fullText[index - 1], options.profile);
                 window.setTimeout(next, delay);
             }
 

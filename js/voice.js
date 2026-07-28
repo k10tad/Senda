@@ -148,7 +148,7 @@
             : target;
         if (!element) return;
         if (window.SendaTypewriter?.show) {
-            window.SendaTypewriter.show(element, text);
+            window.SendaTypewriter.show(element, text, { profile: "voice" });
         } else {
             element.textContent = text;
         }

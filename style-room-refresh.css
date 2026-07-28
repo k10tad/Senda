@@ -104,12 +104,20 @@ body[data-senda-page="settings"] .moonlight-sky::after {
 }
 
 body[data-senda-page="sleep"] .sleep-message {
-    background: rgba(9, 15, 9, .64) !important;
-    box-shadow:
-        0 14px 32px rgba(0, 0, 0, .24),
-        inset 0 0 0 1px rgba(240, 223, 176, .025);
-    backdrop-filter: blur(4px) saturate(94%);
-    -webkit-backdrop-filter: blur(4px) saturate(94%);
+    min-height: 4.9em;
+    padding: 18px 8px 8px;
+    text-align: center;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow:
+        0 2px 12px rgba(0, 0, 0, .96),
+        0 0 28px rgba(0, 0, 0, .72);
 }
 
 /* 台詞はカードに閉じ込めず、写真の余韻へ直接置く。 */
