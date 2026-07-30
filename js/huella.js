@@ -377,6 +377,27 @@
         await renderAlbum();
     }
 
+    async function addSystemDiary(entry = {}) {
+        const now = Date.now();
+        const key = entry.dateKey || dateKey(new Date());
+        const id = entry.id || `senda-system-${key}-${now}`;
+        await putEntry({
+            id,
+            entryType: "diary",
+            dateKey: key,
+            createdAt: Number(entry.createdAt) || now,
+            updatedAt: now,
+            title: String(entry.title || "ふたりの記録"),
+            body: String(entry.body || ""),
+            time: String(entry.time || "")
+        });
+
+        if (!elements.overlay.hidden && !elements.calendarPanel.hidden) {
+            await renderCalendar();
+        }
+        return id;
+    }
+
     elements.open?.addEventListener("click", openOverlay);
     elements.close?.addEventListener("click", closeOverlay);
     elements.albumTab?.addEventListener("click", () => switchMode("album"));
@@ -407,6 +428,7 @@
         getAllMemories: getAllEntries,
         importEntries,
         importMemories: importEntries,
+        addSystemDiary,
         clearEntries,
         clearMemories: clearEntries,
         render: renderAlbum

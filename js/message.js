@@ -620,6 +620,9 @@ function setCompanionReplyChoicesVisible(isVisible) {
     if (!companionReplyChoices) return;
 
     companionReplyChoices.hidden = !isVisible;
+    if (!isVisible) {
+        companionReplyChoices.classList.remove("senda-stay-choices");
+    }
     companionReplyButtons.forEach(function (button) {
         button.disabled = false;
     });
@@ -672,28 +675,33 @@ const companionReplySets = {
     day: [
         { value: "busy", label: "今日は忙しい" },
         { value: "break", label: "少し休む" },
-        { value: "justCalled", label: "呼んだだけ" }
+        { value: "justCalled", label: "呼んだだけ" },
+        { value: "stay", label: "そばにいて" }
     ],
     work: [
         { value: "busy", label: "まだ忙しい" },
         { value: "break", label: "少し休憩する" },
-        { value: "justCalled", label: "呼んだだけ" }
+        { value: "justCalled", label: "呼んだだけ" },
+        { value: "stay", label: "そばにいて" }
     ],
     night: [
         { value: "tired", label: "少し疲れた" },
         { value: "cantSleep", label: "眠れない" },
-        { value: "justCalled", label: "呼んだだけ" }
+        { value: "justCalled", label: "呼んだだけ" },
+        { value: "stay", label: "そばにいて" }
     ],
     weather: [
         { value: "headHeavy", label: "頭が重い" },
         { value: "quiet", label: "今日は静かにしたい" },
-        { value: "justCalled", label: "呼んだだけ" }
+        { value: "justCalled", label: "呼んだだけ" },
+        { value: "stay", label: "そばにいて" }
     ]
 };
 
 function updateCompanionReplyChoices() {
     const context = getCompanionReplyContext();
     const choices = companionReplySets[context] || companionReplySets.day;
+    companionReplyChoices?.classList.remove("senda-stay-choices");
 
     companionReplyButtons.forEach(function (button, index) {
         const choice = choices[index];
@@ -704,13 +712,34 @@ function updateCompanionReplyChoices() {
 
         button.hidden = false;
         button.dataset.companionReply = choice.value;
-        button.textContent = choice.label;
+        if (choice.value === "stay") {
+            button.replaceChildren();
+            const label = document.createElement("span");
+            const modeName = document.createElement("small");
+            label.textContent = choice.label;
+            modeName.textContent = "Quédate";
+            button.append(label, modeName);
+        } else {
+            button.textContent = choice.label;
+        }
     });
 }
 
 function callHarry() {
     clearTimeout(companionReplyTimer);
     clearTimeout(companionReplyClosingTimer);
+
+    if (window.SendaStayMode?.isActive?.()) {
+        if (window.SendaVoice?.playStay && message) {
+            window.SendaVoice.playStay(message);
+        }
+        window.SendaStayMode.openChoices(
+            companionReplyChoices,
+            companionReplyButtons
+        );
+        return;
+    }
+
     harryCallCount += 1;
     clearTimeout(harryCallResetTimer);
 
@@ -734,6 +763,26 @@ function callHarry() {
 }
 
 function handleCompanionReply(reply) {
+    if (reply === "stay" && window.SendaStayMode) {
+        clearTimeout(companionReplyTimer);
+        clearTimeout(companionReplyClosingTimer);
+        setCompanionReplyChoicesVisible(false);
+        window.SendaStayMode.start(message);
+        return;
+    }
+
+    if (reply === "stayEnd" && window.SendaStayMode) {
+        setCompanionReplyChoicesVisible(false);
+        window.SendaStayMode.stop();
+        return;
+    }
+
+    if (reply === "stayContinue" && window.SendaStayMode) {
+        setCompanionReplyChoicesVisible(false);
+        window.SendaStayMode.continueStay();
+        return;
+    }
+
     const dialogueKeys = {
         busy: "normalReplyBusy",
         break: "normalReplyBreak",

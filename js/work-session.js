@@ -33,6 +33,11 @@ function setSessionCompanionImage(state) {
     const harry = document.getElementById("harry");
     if (!harry) return;
 
+    if (state === "idle" && window.SendaActivity) {
+        window.SendaActivity.restoreForIdle();
+        return;
+    }
+
     const images = window.SENDA_IMAGES || {};
     const imageByState = {
         work: images.work || "assets/companion-work.jpg",
@@ -41,6 +46,10 @@ function setSessionCompanionImage(state) {
     };
 
     harry.src = imageByState[state] || imageByState.idle;
+
+    if (window.SendaActivity) {
+        window.SendaActivity.setSessionOverride(state !== "idle");
+    }
 }
 
 function getTodayKey() {
@@ -57,6 +66,9 @@ function checkNewDay() {
 
     if (savedDate === today) return;
 
+    if (savedDate) {
+        window.SendaWeekly?.recordWork?.(savedDate, workSeconds, breakSeconds);
+    }
     localStorage.setItem("senda_yesterdayFocusSeconds", String(workSeconds));
 
     workSeconds = 0;
@@ -91,6 +103,7 @@ function saveSessionState() {
 
     // 既存の独り言・起動メッセージとの互換用。
     localStorage.setItem("senda_todayFocusSeconds", String(workSeconds));
+    window.SendaWeekly?.recordWork?.(getTodayKey(), workSeconds, breakSeconds);
 }
 
 function updateSessionDisplay() {
@@ -187,6 +200,10 @@ function stopSessionSoundsSafely() {
 }
 
 function beginWorkSession() {
+    if (window.SendaStayMode?.isActive?.()) {
+        window.SendaStayMode.stop({ silent: true });
+    }
+
     applyElapsedTime();
     sessionState = "work";
     sessionLastTick = Date.now();

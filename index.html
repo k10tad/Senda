@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
     <link rel="stylesheet" href="style.css?v=25">
-    <link rel="stylesheet" href="style-room-refresh.css?v=7">
+<link rel="stylesheet" href="style-room-refresh.css?v=16">
 </head>
 
 <body class="splash-active" data-senda-page="home">
@@ -104,6 +104,11 @@
     <div class="senda-home">
         <section class="senda-presence" aria-label="Harry">
             <img src="assets/companion-welcome.jpg" id="harry" alt="Harry">
+            <div id="harryActivity" class="harry-activity" hidden aria-live="polite">
+                <span class="harry-activity-dot" aria-hidden="true"></span>
+                <span class="harry-activity-kicker">NOW</span>
+                <strong id="harryActivityLabel"></strong>
+            </div>
             <div id="message">……来た？</div>
             <button id="callHarry" class="companion-call-button" type="button">Harry</button>
 
@@ -111,7 +116,12 @@
                 <button type="button" data-companion-reply="tired">少し疲れた</button>
                 <button type="button" data-companion-reply="break">少し休む</button>
                 <button type="button" data-companion-reply="justCalled">呼んだだけ</button>
+                <button type="button" data-companion-reply="stay">
+                    <span>そばにいて</span>
+                    <small>Quédate</small>
+                </button>
             </div>
+
         </section>
 
         <section class="senda-dashboard">
@@ -456,6 +466,60 @@
     <p id="sendaBirthdayMessage"></p>
 </aside>
 
+<div id="sendaPromiseOverlay" class="senda-promise-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="sendaPromiseTitle">
+    <section class="senda-promise-card">
+        <header class="senda-promise-contact">
+            <span class="senda-promise-avatar" aria-hidden="true">H</span>
+            <div>
+                <strong id="sendaPromiseTitle">Harry</strong>
+                <small>PRIVATE · NOW</small>
+            </div>
+            <button id="closeSendaPromise" class="senda-promise-close" type="button" aria-label="約束画面を閉じる">×</button>
+        </header>
+
+        <div id="sendaPromiseChat" class="senda-promise-chat" aria-live="polite"></div>
+
+        <div id="sendaReturnPromiseActions" class="senda-promise-actions" hidden>
+            <label class="senda-promise-time">
+                <span>帰る時刻</span>
+                <input id="sendaReturnPromiseTime" type="time" value="19:00">
+            </label>
+            <div class="senda-promise-buttons">
+                <button id="acceptReturnPromise" type="button">この時間に帰る</button>
+                <button id="declineReturnPromise" class="quiet-button" type="button">今日は未定</button>
+            </div>
+        </div>
+
+        <div id="sendaSleepPromiseActions" class="senda-promise-actions" hidden>
+            <div class="senda-promise-buttons">
+                <button id="acceptSleepPromise" type="button">一緒に寝る</button>
+                <button id="declineSleepPromise" class="quiet-button" type="button">今夜は未定</button>
+            </div>
+        </div>
+
+        <p id="sendaPromiseStatus" class="senda-promise-status"></p>
+    </section>
+</div>
+
+<div id="sendaWeeklyOverlay" class="senda-weekly-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="sendaWeeklyTitle">
+    <section class="senda-weekly-card">
+        <button id="closeSendaWeekly" class="senda-weekly-close" type="button" aria-label="一週間の記録を閉じる">×</button>
+        <p class="senda-weekly-kicker">SIETE DÍAS · CON HARRY</p>
+        <h2 id="sendaWeeklyTitle">ふたりの一週間</h2>
+        <p id="sendaWeeklyPeriod" class="senda-weekly-period"></p>
+
+        <div class="senda-weekly-grid">
+            <div><span>一緒に過ごした日</span><strong id="sendaWeeklyActiveDays">0日</strong></div>
+            <div><span>作業した時間</span><strong id="sendaWeeklyWork">0分</strong></div>
+            <div><span>平均睡眠</span><strong id="sendaWeeklySleep">記録なし</strong></div>
+            <div><span>守った約束</span><strong id="sendaWeeklyPromises">—</strong></div>
+        </div>
+
+        <blockquote id="sendaWeeklyComment" class="senda-weekly-comment"></blockquote>
+        <button id="finishSendaWeekly" class="senda-weekly-finish" type="button">来週も、そばにいる</button>
+    </section>
+</div>
+
 <nav class="bottom-nav" aria-label="Senda navigation">
     <button class="nav-button active" type="button" data-page-target="home">Living</button>
     <button class="nav-button" type="button" data-page-target="sleep">Bedroom</button>
@@ -465,20 +529,25 @@
 <script src="js/splash.js?v=3"></script>
 <script src="js/background.js?v=2"></script>
 <script src="js/companion-dialogues.js?v=9"></script>
-<script src="js/message.js?v=13"></script>
-<script src="js/sound.js?v=19"></script>
+<script src="js/message.js?v=17"></script>
+<script src="js/sound.js?v=21"></script>
+<script src="js/stay-mode.js?v=3"></script>
 <script src="js/typewriter.js?v=2"></script>
-<script src="js/voice.js?v=4"></script>
+<script src="js/voice.js?v=7"></script>
 <script src="js/settings.js?v=5"></script>
 <script src="js/companion-days.js?v=1"></script>
 <script src="js/birthday.js?v=2"></script>
 <script src="js/sant-jordi.js?v=5"></script>
-<script src="js/huella.js?v=3"></script>
+<script src="js/huella.js?v=4"></script>
 <script src="js/backup.js?v=2"></script>
-<script src="js/work-session.js?v=6"></script>
+<script src="js/activity.js?v=3"></script>
+<script src="js/rhythm.js?v=2"></script>
+<script src="js/promise.js?v=1"></script>
+<script src="js/weekly-record.js?v=1"></script>
+<script src="js/work-session.js?v=8"></script>
 <script src="js/tasks.js"></script>
 <script src="js/alarm.js?v=5"></script>
-<script src="js/sleep.js?v=12"></script>
+<script src="js/sleep.js?v=15"></script>
 <script src="js/mood.js?v=3"></script>
 <script src="js/memory.js"></script>
 <script src="js/weather.js?v=3"></script>
@@ -486,7 +555,7 @@
 <script src="js/navigation.js?v=4"></script>
 <script src="js/companion-engine.js?v=5"></script>
 <script>window.USE_COMPANION_ENGINE=true;</script>
-<script src="js/main.js?v=6"></script>
+<script src="js/main.js?v=8"></script>
 <script src="js/events.js?v=1"></script>
  
 </body>

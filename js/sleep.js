@@ -161,6 +161,8 @@ function beginSleepVisuals() {
 function startSleepRecord() {
     if (sleepStartTime) return;
 
+    const rhythmLine = window.SendaRhythm?.recordBedtime?.() || "";
+
     if (typeof cancelActiveAlarm === "function") cancelActiveAlarm();
     if (typeof armAlarmAudio === "function") armAlarmAudio();
 
@@ -175,13 +177,15 @@ function startSleepRecord() {
     if (sleepStatus) sleepStatus.textContent = "睡眠中";
     if (typeof startSleepBgm === "function") startSleepBgm();
 
-    if (window.SendaVoice) {
+    const promiseCompleted = window.SendaPromise?.fulfillSleep?.(sleepMessage) || false;
+
+    if (!promiseCompleted && window.SendaVoice) {
         const line = window.SendaVoice.play("sleepStart", sleepMessage);
         if (line) {
             const home = getHomeMessageBox();
             if (home) home.textContent = line.subtitle;
         }
-    } else {
+    } else if (!promiseCompleted) {
         setSleepMessages(
             `${getSendaName()}、今日の分はもう充分や。明日のことは、起きてからでええ。`,
             true
@@ -190,6 +194,13 @@ function startSleepRecord() {
 
     updateSleepTimer();
     sleepTimerId = setInterval(updateSleepTimer, 1000);
+
+    if (rhythmLine && !promiseCompleted) {
+        sleepCommentTimer = setTimeout(function () {
+            setSleepMessages(rhythmLine, true);
+            window.SendaRhythm?.markBedtimeShown?.();
+        }, 5200);
+    }
 }
 
 function getSleepComment(recordText) {
@@ -206,7 +217,15 @@ function getSleepComment(recordText) {
 function stopSleepRecord() {
     if (!sleepStartTime) return;
 
-    const recordText = formatSleepTime(Date.now() - sleepStartTime);
+    const sleepDurationMs = Date.now() - sleepStartTime;
+    const recordText = formatSleepTime(sleepDurationMs);
+    const sleepDate = new Date(sleepStartTime);
+    const sleepDateKey = [
+        sleepDate.getFullYear(),
+        String(sleepDate.getMonth() + 1).padStart(2, "0"),
+        String(sleepDate.getDate()).padStart(2, "0")
+    ].join("-");
+    window.SendaWeekly?.recordSleep?.(sleepDateKey, Math.floor(sleepDurationMs / 1000));
     localStorage.setItem(SENDA_SLEEP_KEYS.lastDuration, recordText);
     localStorage.setItem(SENDA_SLEEP_KEYS.lastDate, new Date().toLocaleDateString());
     localStorage.removeItem(SENDA_SLEEP_KEYS.start);

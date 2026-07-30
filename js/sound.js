@@ -21,6 +21,16 @@ const sendaAudio = {
     breath: new Audio("sound/breath_idle.mp3"),
     throat: new Audio("sound/throat.mp3"),
     step: new Audio("sound/step.mp3"),
+    belt: new Audio("sound/belt.mp3"),
+    card: new Audio("sound/card.mp3"),
+    coin: new Audio("sound/coin.mp3"),
+    dropped: new Audio("sound/dropped.mp3"),
+    keys: new Audio("sound/keys.mp3"),
+    page2: new Audio("sound/page2.mp3"),
+    rope: new Audio("sound/rope.mp3"),
+    tool: new Audio("sound/tool.mp3"),
+    whiskey: new Audio("sound/whiskey.mp3"),
+    zipper: new Audio("sound/zipper.mp3"),
     sleepBreath: new Audio("sound/sleep-breath.mp3"),
     heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
@@ -65,6 +75,16 @@ function applySendaAudioSettings() {
     sendaAudio.gear.volume = living * 0.86;
     sendaAudio.throat.volume = living * 0.74;
     sendaAudio.step.volume = living * 0.92;
+    sendaAudio.belt.volume = living * 0.92;
+    sendaAudio.card.volume = living * 0.72;
+    sendaAudio.coin.volume = living * 0.7;
+    sendaAudio.dropped.volume = living * 0.7;
+    sendaAudio.keys.volume = living * 0.78;
+    sendaAudio.page2.volume = living * 1.08;
+    sendaAudio.rope.volume = living * 0.68;
+    sendaAudio.tool.volume = living * 0.82;
+    sendaAudio.whiskey.volume = living * 0.86;
+    sendaAudio.zipper.volume = living * 0.58;
 
     // 睡眠音はSettingsに依存させず、コード側で固定する。
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
@@ -357,3 +377,54 @@ function playPageStepSound() {
     applySendaAudioSettings();
     replay(sendaAudio.step);
 }
+
+function playSendaActivitySound(activityName) {
+    if (!audioUnlocked || audioMode !== "idle") return false;
+    if (document.body.dataset.sendaPage !== "home") return false;
+    if (window.SendaVoice?.isPlaying?.()) return false;
+
+    const pools = {
+        work: [sendaAudio.pen, sendaAudio.card, sendaAudio.coin, sendaAudio.keys],
+        reading: [sendaAudio.page, sendaAudio.page2],
+        shower: [sendaAudio.belt, sendaAudio.zipper, sendaAudio.dropped],
+        drink: [sendaAudio.whiskey, sendaAudio.throat],
+        maintenance: [sendaAudio.tool, sendaAudio.gear, sendaAudio.rope]
+    };
+    const pool = pools[activityName];
+    if (!pool || !pool.length) return false;
+
+    const audio = pool[Math.floor(Math.random() * pool.length)];
+    applySendaAudioSettings();
+    replay(audio);
+    return true;
+}
+
+function playSendaStaySound() {
+    if (!audioUnlocked || audioMode !== "idle") return false;
+    if (document.body.dataset.sendaPage !== "home") return false;
+    if (window.SendaVoice?.isPlaying?.()) return false;
+
+    const pool = [
+        sendaAudio.breath,
+        sendaAudio.throat,
+        sendaAudio.page,
+        sendaAudio.page2,
+        sendaAudio.belt,
+        sendaAudio.zipper,
+        sendaAudio.keys,
+        sendaAudio.whiskey
+    ];
+    const audio = pool[Math.floor(Math.random() * pool.length)];
+    applySendaAudioSettings();
+    replay(audio);
+    return true;
+}
+
+document.addEventListener("pointerdown", unlockAudio, {
+    once: true,
+    capture: true
+});
+document.addEventListener("keydown", unlockAudio, {
+    once: true,
+    capture: true
+});

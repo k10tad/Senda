@@ -119,6 +119,13 @@
             "harryChat06", "harryChat07", "harryChat08", "harryChat09", "harryChat10"
         ],
         harryChatRare: ["harryChatRare01", "harryChatRare02", "harryChatRare03"],
+        staySweet: [
+            "harryChat02", "harryChat03", "harryChat05", "harryChat06",
+            "harryChat08", "harryChat09", "harryChatRare01",
+            "harryChatRare02", "harryChatRare03"
+        ],
+        promiseReturn: ["harryChat06", "harryChat07", "harryChat09"],
+        promiseSleep: ["goodnight01", "goodnight03", "goodnight04"],
         goodnight: ["goodnight01", "goodnight02", "goodnight03", "goodnight04", "goodnight05"]
     };
 
@@ -164,7 +171,7 @@
         return String(template || "").replaceAll("{name}", getUserName());
     }
 
-    function play(key, target) {
+    function play(key, target, options = {}) {
         const line = lines[key];
         if (!line) return null;
 
@@ -187,6 +194,9 @@
             if (currentVoice !== audio) return;
             currentVoice = null;
             setBackgroundDuck(false);
+            if (typeof options.onFinish === "function") {
+                options.onFinish(resolvedLine);
+            }
         };
 
         audio.onended = finish;
@@ -225,6 +235,15 @@
         return playGroup(isRare ? "harryChatRare" : "harryChat", target);
     }
 
+    function playStay(target) {
+        return playGroup("staySweet", target);
+    }
+
+    function playPromise(type, target) {
+        const group = type === "return" ? "promiseReturn" : "promiseSleep";
+        return playGroup(group, target);
+    }
+
     function playGoodnight(target) {
         return playGroup("goodnight", target);
     }
@@ -234,13 +253,30 @@
         return play(keys[Math.floor(Math.random() * keys.length)], target);
     }
 
-    function queueWelcome(target) {
+    function queueWelcome(target, followupText = "", options = {}) {
         setSubtitle(target, resolveSubtitle(lines.welcome.subtitle));
+
+        function showFollowup() {
+            if (!followupText) return;
+            const element = typeof target === "string"
+                ? document.getElementById(target)
+                : target;
+            if (!element) return;
+
+            if (window.SendaTypewriter?.show) {
+                window.SendaTypewriter.show(element, followupText);
+            } else {
+                element.textContent = followupText;
+            }
+            if (typeof options.onFollowupShown === "function") {
+                options.onFollowupShown(followupText);
+            }
+        }
 
         function playOnce() {
             if (welcomePlayed) return;
             welcomePlayed = true;
-            play("welcome", target);
+            play("welcome", target, { onFinish: showFollowup });
         }
 
         document.addEventListener("pointerdown", playOnce, { once: true });
@@ -254,10 +290,15 @@
         play,
         playGroup,
         playHarryChat,
+        playStay,
+        playPromise,
         playGoodnight,
         playWakeUp,
         queueWelcome,
         resolveSubtitle,
-        stop: stopCurrentVoice
+        stop: stopCurrentVoice,
+        isPlaying: function () {
+            return Boolean(currentVoice && !currentVoice.paused && !currentVoice.ended);
+        }
     };
 })();
