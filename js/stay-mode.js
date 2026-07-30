@@ -49,16 +49,19 @@
         }
     }
 
-    function scheduleSound() {
+    function scheduleSound(initial = false) {
         clearTimeout(soundTimer);
         if (!active) return;
 
-        const delay = (10 + Math.random() * 16) * 1000;
+        const delay = initial
+            ? (2.5 + Math.random() * 2.5) * 1000
+            : (10 + Math.random() * 16) * 1000;
         soundTimer = setTimeout(function () {
             if (active && typeof playSendaStaySound === "function") {
-                playSendaStaySound();
+                const activityName = window.SendaActivity?.getCurrent?.();
+                playSendaStaySound(activityName);
             }
-            scheduleSound();
+            scheduleSound(false);
         }, delay);
     }
 
@@ -105,7 +108,7 @@
         localStorage.setItem(STORAGE_KEY, "1");
         applyVisualState();
         showLine(target, START_LINE);
-        scheduleSound();
+        scheduleSound(true);
         return true;
     }
 
@@ -131,7 +134,7 @@
         const line =
             CONTINUE_LINES[Math.floor(Math.random() * CONTINUE_LINES.length)];
         showLine(null, line);
-        scheduleSound();
+        scheduleSound(false);
     }
 
     function openChoices(container, buttons) {
@@ -168,7 +171,7 @@
 
         active = true;
         applyVisualState();
-        scheduleSound();
+        scheduleSound(true);
     }
 
     window.SendaStayMode = {

@@ -92,7 +92,7 @@ function applySendaAudioSettings() {
     sendaAudio.shower.volume = living;
     sendaAudio.bathtub.volume = living;
 
-    // 逹｡逵�髻ｳ縺ｯSettings縺ｫ萓晏ｭ倥＆縺帙★縲√さ繝ｼ繝牙�縺ｧ蝗ｺ螳壹☆繧九�
+    // 睡眠音はSettingsに依存させず、コード側で固定する。
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
     sendaAudio.heartbeat.volume = SENDA_FIXED_HEARTBEAT_VOLUME;
     sendaAudio.breath.volume = audioMode === "sleep"
@@ -318,7 +318,7 @@ function unlockAudio() {
     audioUnlocked = true;
     applySendaAudioSettings();
 
-    // 繝ｦ繝ｼ繧ｶ繝ｼ謫堺ｽ懊�荳ｭ縺ｧ繧｢繝ｩ繝ｼ繝�髻ｳ繧堤┌髻ｳ蜀咲函縺励∝ｾ後�閾ｪ蜍募�逕溘ｒ險ｱ蜿ｯ縺励ｄ縺吶￥縺吶ｋ縲�
+    // ユーザー操作の中でアラーム音を無音再生し、後の自動再生を許可しやすくする。
     const previous = sendaAudio.alarm.volume;
     sendaAudio.alarm.volume = 0.001;
     safePlay(sendaAudio.alarm).then(function () {
@@ -431,21 +431,49 @@ function playSendaActivitySound(activityName) {
     return true;
 }
 
-function playSendaStaySound() {
+function playSendaStaySound(activityName) {
     if (!audioUnlocked || audioMode !== "idle") return false;
     if (document.body.dataset.sendaPage !== "home") return false;
     if (window.SendaVoice?.isPlaying?.()) return false;
 
-    const pool = [
-        sendaAudio.breath,
-        sendaAudio.throat,
-        sendaAudio.page,
-        sendaAudio.page2,
-        sendaAudio.belt,
-        sendaAudio.zipper,
-        sendaAudio.keys,
-        sendaAudio.whiskey
-    ];
+    const pools = {
+        work: [
+            sendaAudio.pen,
+            sendaAudio.card,
+            sendaAudio.coin,
+            sendaAudio.keys,
+            sendaAudio.dropped
+        ],
+        reading: [
+            sendaAudio.page,
+            sendaAudio.page2,
+            sendaAudio.munch,
+            sendaAudio.throat
+        ],
+        shower: [
+            sendaAudio.shower,
+            sendaAudio.bathtub,
+            sendaAudio.keys
+        ],
+        drink: [
+            sendaAudio.whiskey,
+            sendaAudio.throat,
+            sendaAudio.keys
+        ],
+        maintenance: [
+            sendaAudio.tool,
+            sendaAudio.gear,
+            sendaAudio.rope,
+            sendaAudio.zipper,
+            sendaAudio.belt,
+            sendaAudio.breath
+        ]
+    };
+    const resolvedActivity =
+        activityName ||
+        window.SendaActivity?.getCurrent?.() ||
+        "reading";
+    const pool = pools[resolvedActivity] || pools.reading;
     const audio = pool[Math.floor(Math.random() * pool.length)];
     applySendaAudioSettings();
     replay(audio);
