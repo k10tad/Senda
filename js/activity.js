@@ -23,7 +23,7 @@
             soundDelay: [12, 28]
         },
         shower: {
-            label: "シャワーのあと",
+            label: "シャワー中",
             image: "assets/activity-shower.jpg",
             duration: [22, 42],
             soundDelay: [18, 38]

@@ -138,7 +138,7 @@
         showOverlay();
 
         if (record.type === "return") {
-            addBubble("今日、何時ごろ帰る？　だいたいでええから、先に教えといて。");
+            addBubble("今日、何時ごろ帰る？　だいたいでええから、教えといたって。");
             if (elements.returnTime) elements.returnTime.value = defaultReturnTime(now);
             if (elements.returnActions) elements.returnActions.hidden = false;
             if (elements.status) elements.status.textContent = "約束した時刻を過ぎて戻ると、Harryが迎える。";
@@ -211,7 +211,7 @@
         }
         return {
             title: "一緒に寝る約束",
-            body: "今夜はちゃんと俺んとこへ戻ってきた。約束守ったな。ほな、もう離れんでええよ。"
+            body: "今夜はちゃんと俺んとこへ戻ってきた。約束守ったな。ほな、もう離れんとって。"
         };
     }
 

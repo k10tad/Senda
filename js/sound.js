@@ -27,10 +27,13 @@ const sendaAudio = {
     dropped: new Audio("sound/dropped.mp3"),
     keys: new Audio("sound/keys.mp3"),
     page2: new Audio("sound/page2.mp3"),
+    munch: new Audio("sound/munch.mp3"),
     rope: new Audio("sound/rope.mp3"),
     tool: new Audio("sound/tool.mp3"),
     whiskey: new Audio("sound/whiskey.mp3"),
     zipper: new Audio("sound/zipper.mp3"),
+    shower: new Audio("sound/shower.mp3"),
+    bathtub: new Audio("sound/bathtub.mp3"),
     sleepBreath: new Audio("sound/sleep-breath.mp3"),
     heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
@@ -81,12 +84,15 @@ function applySendaAudioSettings() {
     sendaAudio.dropped.volume = living * 0.7;
     sendaAudio.keys.volume = living * 0.78;
     sendaAudio.page2.volume = living * 1.08;
+    sendaAudio.munch.volume = living * 0.82;
     sendaAudio.rope.volume = living * 0.68;
     sendaAudio.tool.volume = living * 0.82;
     sendaAudio.whiskey.volume = living * 0.86;
     sendaAudio.zipper.volume = living * 0.58;
+    sendaAudio.shower.volume = living;
+    sendaAudio.bathtub.volume = living;
 
-    // 睡眠音はSettingsに依存させず、コード側で固定する。
+    // 逹｡逵�髻ｳ縺ｯSettings縺ｫ萓晏ｭ倥＆縺帙★縲√さ繝ｼ繝牙�縺ｧ蝗ｺ螳壹☆繧九�
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
     sendaAudio.heartbeat.volume = SENDA_FIXED_HEARTBEAT_VOLUME;
     sendaAudio.breath.volume = audioMode === "sleep"
@@ -312,7 +318,7 @@ function unlockAudio() {
     audioUnlocked = true;
     applySendaAudioSettings();
 
-    // ユーザー操作の中でアラーム音を無音再生し、後の自動再生を許可しやすくする。
+    // 繝ｦ繝ｼ繧ｶ繝ｼ謫堺ｽ懊�荳ｭ縺ｧ繧｢繝ｩ繝ｼ繝�髻ｳ繧堤┌髻ｳ蜀咲函縺励∝ｾ後�閾ｪ蜍募�逕溘ｒ險ｱ蜿ｯ縺励ｄ縺吶￥縺吶ｋ縲�
     const previous = sendaAudio.alarm.volume;
     sendaAudio.alarm.volume = 0.001;
     safePlay(sendaAudio.alarm).then(function () {
@@ -384,11 +390,37 @@ function playSendaActivitySound(activityName) {
     if (window.SendaVoice?.isPlaying?.()) return false;
 
     const pools = {
-        work: [sendaAudio.pen, sendaAudio.card, sendaAudio.coin, sendaAudio.keys],
-        reading: [sendaAudio.page, sendaAudio.page2],
-        shower: [sendaAudio.belt, sendaAudio.zipper, sendaAudio.dropped],
-        drink: [sendaAudio.whiskey, sendaAudio.throat],
-        maintenance: [sendaAudio.tool, sendaAudio.gear, sendaAudio.rope]
+        work: [
+            sendaAudio.pen,
+            sendaAudio.card,
+            sendaAudio.coin,
+            sendaAudio.keys,
+            sendaAudio.dropped
+        ],
+        reading: [
+            sendaAudio.page,
+            sendaAudio.page2,
+            sendaAudio.munch,
+            sendaAudio.throat
+        ],
+        shower: [
+            sendaAudio.shower,
+            sendaAudio.bathtub,
+            sendaAudio.keys
+        ],
+        drink: [
+            sendaAudio.whiskey,
+            sendaAudio.throat,
+            sendaAudio.keys
+        ],
+        maintenance: [
+            sendaAudio.tool,
+            sendaAudio.gear,
+            sendaAudio.rope,
+            sendaAudio.zipper,
+            sendaAudio.belt,
+            sendaAudio.breath
+        ]
     };
     const pool = pools[activityName];
     if (!pool || !pool.length) return false;
