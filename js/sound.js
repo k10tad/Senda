@@ -38,6 +38,8 @@ const sendaAudio = {
     heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
 };
+const sendaActivityAudio = new Audio();
+sendaActivityAudio.preload = "auto";
 
 sendaAudio.workBgm.loop = true;
 sendaAudio.breakBgm.loop = true;
@@ -173,6 +175,7 @@ function clearAudioTimers() {
 
 function stopAllAudioElements() {
     Object.values(sendaAudio).forEach(audio => stopAudio(audio));
+    stopAudio(sendaActivityAudio);
 }
 
 function syncBedroomHeartbeat() {
@@ -318,6 +321,16 @@ function unlockAudio() {
     audioUnlocked = true;
     applySendaAudioSettings();
 
+    // iOS向け：生活音専用Audioをユーザー操作中に一度解放し、
+    // 以後はactivityとQuédateの定期音で同じ要素を再利用する。
+    const activityWasMuted = sendaActivityAudio.muted;
+    sendaActivityAudio.src = sendaAudio.breath.src;
+    sendaActivityAudio.muted = true;
+    safePlay(sendaActivityAudio).then(function () {
+        stopAudio(sendaActivityAudio);
+        sendaActivityAudio.muted = activityWasMuted;
+    });
+
     // ユーザー操作の中でアラーム音を無音再生し、後の自動再生を許可しやすくする。
     const previous = sendaAudio.alarm.volume;
     sendaAudio.alarm.volume = 0.001;
@@ -427,7 +440,11 @@ function playSendaActivitySound(activityName) {
 
     const audio = pool[Math.floor(Math.random() * pool.length)];
     applySendaAudioSettings();
-    replay(audio);
+    sendaActivityAudio.pause();
+    sendaActivityAudio.src = audio.currentSrc || audio.src;
+    sendaActivityAudio.volume = audio.volume;
+    try { sendaActivityAudio.currentTime = 0; } catch (_) {}
+    safePlay(sendaActivityAudio);
     return true;
 }
 
@@ -476,7 +493,11 @@ function playSendaStaySound(activityName) {
     const pool = pools[resolvedActivity] || pools.reading;
     const audio = pool[Math.floor(Math.random() * pool.length)];
     applySendaAudioSettings();
-    replay(audio);
+    sendaActivityAudio.pause();
+    sendaActivityAudio.src = audio.currentSrc || audio.src;
+    sendaActivityAudio.volume = audio.volume;
+    try { sendaActivityAudio.currentTime = 0; } catch (_) {}
+    safePlay(sendaActivityAudio);
     return true;
 }
 
