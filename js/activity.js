@@ -8,6 +8,7 @@
 
     const STORAGE_KEY = "senda_harry_current_activity_v1";
     const MINUTE = 60 * 1000;
+    const PREVIEW_PARAM = "preview";
 
     const activities = {
         work: {
@@ -39,6 +40,13 @@
             image: "assets/activity-maintenance.jpg",
             duration: [45, 90],
             soundDelay: [12, 30]
+        },
+        guitar: {
+            label: "気まぐれ演奏中",
+            image: "assets/activity-guitar.jpg",
+            duration: [55, 105],
+            // 音源が約2分あるため、途中で再開しない間隔にする。
+            soundDelay: [135, 190]
         }
     };
 
@@ -47,6 +55,20 @@
     let soundTimer = null;
     let sessionOverride = false;
     let passiveOverride = false;
+    let previewName = null;
+    let previewSoundPending = false;
+
+    function readPreviewName() {
+        const value = new URLSearchParams(window.location.search).get(PREVIEW_PARAM);
+        if (!value || value === "off" || value === "none") return null;
+        return activities[value] ? value : null;
+    }
+
+    function clearPreviewFromUrl() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(PREVIEW_PARAM);
+        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+    }
 
     function readSaved() {
         try {
@@ -77,6 +99,9 @@
         add("reading", hour >= 20 || hour < 2 ? 6 : 3);
         add("maintenance", hour >= 10 && hour < 22 ? 5 : 1);
 
+        // 夕方から夜の入口だけに現れる、少し特別な過ごし方。
+        if (hour >= 17 && hour < 21) add("guitar", 8);
+
         if ((hour >= 6 && hour < 10) || hour >= 21) add("shower", 5);
         if (hour >= 18 || hour < 2) add("drink", 6);
 
@@ -96,6 +121,7 @@
     }
 
     function canShow() {
+        if (previewName) return true;
         return !sessionOverride
             && !passiveOverride
             && (typeof sessionState === "undefined" || sessionState === "idle");
@@ -124,7 +150,7 @@
 
     function scheduleAmbientSound() {
         clearTimeout(soundTimer);
-        if (!canShow() || !currentName) return;
+        if (previewName || !canShow() || !currentName) return;
 
         const range = activities[currentName].soundDelay || [15, 35];
         const delay = (range[0] + Math.random() * (range[1] - range[0])) * 1000;
@@ -141,6 +167,7 @@
 
     function scheduleChange(until) {
         clearTimeout(changeTimer);
+        if (previewName) return;
         const delay = Math.max(1000, until - Date.now());
         changeTimer = setTimeout(function () {
             setActivity(pickNext(), true);
@@ -203,7 +230,59 @@
         }
     }
 
+
+    function tryPreviewSound() {
+        if (!previewName || !previewSoundPending) return;
+        if (typeof playSendaActivitySound !== "function") return;
+
+        if (playSendaActivitySound(previewName)) {
+            previewSoundPending = false;
+            document.removeEventListener("pointerdown", tryPreviewSound);
+            document.removeEventListener("keydown", tryPreviewSound);
+        }
+    }
+
+    function startPreview(name, playSound) {
+        if (!activities[name]) return false;
+
+        previewName = name;
+        sessionOverride = false;
+        passiveOverride = false;
+        currentName = name;
+        clearTimeout(changeTimer);
+        clearTimeout(soundTimer);
+        render();
+
+        previewSoundPending = playSound !== false;
+        if (previewSoundPending) {
+            tryPreviewSound();
+            document.addEventListener("pointerdown", tryPreviewSound, { passive: true });
+            document.addEventListener("keydown", tryPreviewSound);
+        }
+        return true;
+    }
+
+    function stopPreview(reloadPage) {
+        previewName = null;
+        previewSoundPending = false;
+        document.removeEventListener("pointerdown", tryPreviewSound);
+        document.removeEventListener("keydown", tryPreviewSound);
+        clearPreviewFromUrl();
+
+        if (reloadPage !== false) {
+            window.location.reload();
+            return;
+        }
+        restoreForIdle();
+    }
+
     function init() {
+        const requestedPreview = readPreviewName();
+        if (requestedPreview) {
+            startPreview(requestedPreview, true);
+            return;
+        }
+
         if (typeof sessionState !== "undefined" && sessionState !== "idle") {
             sessionOverride = true;
             hideBadge();
@@ -218,6 +297,13 @@
         setPassiveOverride,
         getCurrent: function () {
             return currentName;
+        },
+        preview: function (name, playSound) {
+            return startPreview(name || "guitar", playSound);
+        },
+        stopPreview: stopPreview,
+        isPreview: function () {
+            return Boolean(previewName);
         }
     };
 
