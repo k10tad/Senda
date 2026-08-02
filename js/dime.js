@@ -196,16 +196,29 @@
 
     function openDime() {
         if (!el.overlay) return;
-        el.overlay.hidden = false;
+        if (typeof el.overlay.showModal === "function") {
+            if (!el.overlay.open) el.overlay.showModal();
+        } else {
+            el.overlay.hidden = false;
+            el.overlay.classList.add("is-fallback-open");
+        }
         document.body.classList.add("dime-open");
         selectTab("messages");
-        window.setTimeout(() => el.input?.focus({ preventScroll: true }), 180);
     }
 
     function closeDime() {
         if (!el.overlay) return;
-        el.overlay.hidden = true;
+        if (typeof el.overlay.close === "function" && el.overlay.open) {
+            el.overlay.close();
+        } else {
+            el.overlay.hidden = true;
+            el.overlay.classList.remove("is-fallback-open");
+        }
         document.body.classList.remove("dime-open");
+    }
+
+    function isDimeOpen() {
+        return Boolean(el.overlay?.open || el.overlay?.classList.contains("is-fallback-open"));
     }
 
     function resumePending() {
@@ -228,6 +241,10 @@
     });
     el.close?.addEventListener("click", closeDime);
     el.overlay?.addEventListener("click", event => { if (event.target === el.overlay) closeDime(); });
+    el.overlay?.addEventListener("cancel", event => {
+        event.preventDefault();
+        closeDime();
+    });
     el.tabs.forEach(tab => tab.addEventListener("click", () => selectTab(tab.dataset.dimeTab)));
     el.form?.addEventListener("submit", event => {
         event.preventDefault();
@@ -241,7 +258,7 @@
         if (!el.promisesPanel?.hidden) renderPromises();
     });
     document.addEventListener("keydown", event => {
-        if (event.key === "Escape" && !el.overlay?.hidden) closeDime();
+        if (event.key === "Escape" && isDimeOpen()) closeDime();
     });
 
     resumePending();
