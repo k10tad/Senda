@@ -34,6 +34,7 @@ const sendaAudio = {
     zipper: new Audio("sound/zipper.mp3"),
     shower: new Audio("sound/shower.mp3"),
     bathtub: new Audio("sound/bathtub.mp3"),
+    guitar: new Audio("sound/harry_guitar.mp3"),
     sleepBreath: new Audio("sound/sleep-breath.mp3"),
     heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
@@ -93,6 +94,7 @@ function applySendaAudioSettings() {
     sendaAudio.zipper.volume = living * 0.58;
     sendaAudio.shower.volume = living;
     sendaAudio.bathtub.volume = living;
+    sendaAudio.guitar.volume = clamp01(living * 1.05);
 
     // 睡眠音はSettingsに依存させず、コード側で固定する。
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
@@ -433,6 +435,9 @@ function playSendaActivitySound(activityName) {
             sendaAudio.zipper,
             sendaAudio.belt,
             sendaAudio.breath
+        ],
+        guitar: [
+            sendaAudio.guitar
         ]
     };
     const pool = pools[activityName];
@@ -484,6 +489,9 @@ function playSendaStaySound(activityName) {
             sendaAudio.zipper,
             sendaAudio.belt,
             sendaAudio.breath
+        ],
+        guitar: [
+            sendaAudio.guitar
         ]
     };
     const resolvedActivity =
