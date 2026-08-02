@@ -37,6 +37,23 @@ function showSendaPage(pageName, options = {}) {
         setBedroomAmbience(pageName === "sleep");
     }
 
+    // Bedroomで起床した直後は朝の画像を見せたままにし、
+    // Livingへ戻った時点で作業・休憩または現在行動の画像へ復帰する。
+    if (pageName === "home" && isActualChange) {
+        if (typeof sessionState !== "undefined" && sessionState !== "idle") {
+            if (typeof setSessionCompanionImage === "function") {
+                setSessionCompanionImage(sessionState);
+            }
+        } else if (window.SendaActivity?.restoreForIdle) {
+            window.SendaActivity.restoreForIdle();
+        } else {
+            const harry = document.getElementById("harry");
+            if (harry && window.SENDA_IMAGES?.normal) {
+                harry.src = window.SENDA_IMAGES.normal;
+            }
+        }
+    }
+
     if (isActualChange && options.silent !== true) {
         if (typeof playPageStepSound === "function") {
             playPageStepSound();

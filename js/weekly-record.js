@@ -191,14 +191,14 @@
         return `${start.getMonth() + 1}月${start.getDate()}日 — ${end.getMonth() + 1}月${end.getDate()}日`;
     }
 
-    function buildComment(summary) {
+    function buildComments(summary) {
         const averageSleep = summary.sleepCount
             ? summary.sleepSeconds / summary.sleepCount
             : 0;
         const lines = [];
 
         if (summary.activeDays === 0) {
-            return "今週の記録は、まだ白紙みたいやな。まあええよ。来週からまた、一緒に少しずつ残してこ。";
+            return ["今週の記録は、まだ白紙みたいやな。まあええよ。来週からまた、一緒に少しずつ残してこ。"];
         }
 
         if (summary.workSeconds >= 10 * 3600) {
@@ -222,10 +222,10 @@
         } else if (summary.promisesCompleted) {
             lines.push("守ってくれた約束、ちゃんと覚えとるよ。");
         }
-        return lines.join(" ");
+        return lines;
     }
 
-    function diaryBody(summary, comment) {
+    function diaryBody(summary, comments) {
         const sleepAverage = summary.sleepCount
             ? formatDuration(summary.sleepSeconds / summary.sleepCount)
             : "記録なし";
@@ -234,9 +234,9 @@
             `作業：${formatDuration(summary.workSeconds)}`,
             `休憩：${formatDuration(summary.breakSeconds)}`,
             `睡眠：${summary.sleepCount ? `${summary.sleepCount}回・平均${sleepAverage}` : "記録なし"}`,
-            `約束：${summary.promisesCompleted}/${summary.promisesMade}回達成`,
+            `守った約束：${summary.promisesCompleted}/${summary.promisesMade}`,
             "",
-            comment
+            ...comments.map(line => `ハリー：「${line}」`)
         ].join("\n");
     }
 
@@ -244,7 +244,8 @@
         const sleepAverage = summary.sleepCount
             ? formatDuration(summary.sleepSeconds / summary.sleepCount)
             : "記録なし";
-        const comment = buildComment(summary);
+        const comments = buildComments(summary);
+        const comment = comments.join(" ");
 
         if (elements.period) elements.period.textContent = formatPeriod(summary.range);
         if (elements.activeDays) elements.activeDays.textContent = `${summary.activeDays}日`;
@@ -262,7 +263,7 @@
                 elements.comment.textContent = comment;
             }
         }
-        return comment;
+        return comments;
     }
 
     function shownWeeks() {
@@ -271,7 +272,7 @@
         return saved;
     }
 
-    function markShown(summary, comment) {
+    function markShown(summary, comments) {
         const shown = shownWeeks();
         if (shown.weeks[summary.range.key]) return;
         shown.weeks[summary.range.key] = new Date().toISOString();
@@ -282,7 +283,7 @@
             dateKey: dateKey(summary.range.end),
             createdAt: Date.now(),
             title: "ふたりの一週間",
-            body: diaryBody(summary, comment),
+            body: diaryBody(summary, comments),
             time: "19:00"
         });
         if (write && typeof write.catch === "function") {
@@ -320,8 +321,8 @@
 
         elements.overlay.hidden = false;
         document.body.classList.add("senda-weekly-open");
-        const comment = render(summary);
-        if (!options.preview) markShown(summary, comment);
+        const comments = render(summary);
+        if (!options.preview) markShown(summary, comments);
         return true;
     }
 

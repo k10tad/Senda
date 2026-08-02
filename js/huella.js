@@ -17,6 +17,10 @@
         albumPanel: $("huellaAlbumPanel"), calendarPanel: $("huellaCalendarPanel"),
         fileInput: $("huellaFileInput"), addPhoto: $("huellaAddButton"), grid: $("huellaGrid"),
         empty: $("huellaEmpty"), count: $("huellaCount"),
+        register: $("huellaPhotoRegister"), registerForm: $("huellaPhotoRegisterForm"),
+        registerPreview: $("huellaPhotoRegisterPreview"), registerCount: $("huellaPhotoRegisterCount"),
+        registerDate: $("huellaPhotoRegisterDate"), registerNote: $("huellaPhotoRegisterNote"),
+        registerClose: $("huellaPhotoRegisterClose"), registerCancel: $("huellaPhotoRegisterCancel"),
         viewer: $("huellaViewer"), viewerImage: $("huellaViewerImage"), viewerNote: $("huellaViewerNote"),
         viewerDate: $("huellaViewerDate"), viewerSave: $("huellaViewerSave"),
         viewerDelete: $("huellaViewerDelete"), viewerClose: $("huellaViewerClose"),
@@ -35,7 +39,7 @@
 
     // Keep every viewport-fixed layer outside transformed app containers.
     // Mobile Safari otherwise positions nested dialogs against the full document.
-    [elements.overlay, elements.viewer, elements.editor].forEach(layer => {
+    [elements.overlay, elements.register, elements.viewer, elements.editor].forEach(layer => {
         if (layer && layer.parentElement !== document.body) {
             document.body.appendChild(layer);
         }
@@ -43,6 +47,8 @@
 
     let dbPromise;
     let currentPhoto = null;
+    let pendingPhotos = [];
+    let pendingPreviewUrl = "";
     let selectedDate = startOfDay(new Date());
     let calendarMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
     let lastPhotoCommentIndex = -1;
@@ -154,7 +160,6 @@
         const [y, m, d] = String(value).split("-").map(Number);
         return new Date(y, m - 1, d, 12);
     }
-    function timestampFromKey(value, fallback = Date.now()) { const d = dateFromKey(value); return Number.isNaN(d.getTime()) ? fallback : d.getTime(); }
     function formatFullDate(value) {
         const d = value instanceof Date ? value : new Date(value);
         return d.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" });
@@ -167,7 +172,13 @@
         revokeUrls();
         const entries = await getAllEntries();
         const photos = entries.filter(entry => entry.entryType === "memory" && entry.imageBlob instanceof Blob)
-            .sort((a, b) => b.createdAt - a.createdAt);
+            .sort((a, b) => {
+                const aDate = /^\d{4}-\d{2}-\d{2}$/.test(a.dateKey || "") ? a.dateKey : "";
+                const bDate = /^\d{4}-\d{2}-\d{2}$/.test(b.dateKey || "") ? b.dateKey : "";
+                if (aDate && bDate && aDate !== bDate) return bDate.localeCompare(aDate);
+                if (aDate !== bDate) return aDate ? -1 : 1;
+                return (b.createdAt || 0) - (a.createdAt || 0);
+            });
         elements.grid.replaceChildren();
         elements.count.textContent = `${photos.length}枚`;
         elements.empty.hidden = photos.length > 0;
@@ -175,13 +186,14 @@
             const button = document.createElement("button");
             button.type = "button";
             button.className = "huella-photo";
-            button.setAttribute("aria-label", `${formatFullDate(photo.createdAt)}の写真を開く`);
+            const displayDate = photo.dateKey ? dateFromKey(photo.dateKey) : new Date(photo.createdAt);
+            button.setAttribute("aria-label", `${formatFullDate(displayDate)}の写真を開く`);
             const image = document.createElement("img");
             image.src = objectUrl(photo.imageBlob);
             image.alt = photo.note || "Huellaの写真";
             image.loading = "lazy";
             const label = document.createElement("span");
-            label.textContent = new Date(photo.createdAt).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" });
+            label.textContent = displayDate.toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" });
             button.append(image, label);
             button.addEventListener("click", () => openPhoto(photo));
             elements.grid.appendChild(button);
@@ -275,7 +287,7 @@
             if (journal) journal.scrollTop = 0;
         });
     }
-    function closeOverlay() { closePhoto(); closeEditor(); elements.overlay.hidden = true; document.body.classList.remove("huella-open"); }
+    function closeOverlay() { closePhotoRegistration(); closePhoto(); closeEditor(); elements.overlay.hidden = true; document.body.classList.remove("huella-open"); }
 
     function nextPhotoComment() {
         if (PHOTO_COMMENTS.length < 2) return PHOTO_COMMENTS[0] || "";
@@ -308,24 +320,59 @@
         currentPhoto = null;
     }
 
-    async function addFiles(files) {
-        const selected = Array.from(files || []).filter(file => file.type.startsWith("image/"));
-        if (!selected.length) return;
-        elements.addPhoto.disabled = true; elements.addPhoto.textContent = "保存中…";
+    function openPhotoRegistration(files) {
+        pendingPhotos = Array.from(files || []).filter(file => file.type.startsWith("image/"));
+        if (!pendingPhotos.length) {
+            elements.fileInput.value = "";
+            return;
+        }
+        if (pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+        pendingPreviewUrl = URL.createObjectURL(pendingPhotos[0]);
+        elements.registerPreview.src = pendingPreviewUrl;
+        elements.registerCount.textContent = pendingPhotos.length > 1
+            ? `${pendingPhotos.length}枚を選択中`
+            : pendingPhotos[0].name;
+        elements.registerDate.value = dateKey(new Date());
+        elements.registerNote.value = "";
+        elements.register.hidden = false;
+    }
+
+    function closePhotoRegistration() {
+        if (!elements.register) return;
+        elements.register.hidden = true;
+        elements.fileInput.value = "";
+        pendingPhotos = [];
+        if (pendingPreviewUrl) {
+            URL.revokeObjectURL(pendingPreviewUrl);
+            pendingPreviewUrl = "";
+        }
+        elements.registerPreview?.removeAttribute("src");
+    }
+
+    async function savePhotoRegistration(event) {
+        event.preventDefault();
+        if (!pendingPhotos.length) return;
+        const submit = elements.registerForm.querySelector('button[type="submit"]');
+        const chosenDate = elements.registerDate.value || dateKey(new Date());
+        const note = elements.registerNote.value.trim();
+        const started = Date.now();
+        submit.disabled = true;
+        submit.textContent = "保存中…";
         try {
-            for (const file of selected) {
-                const now = Date.now();
-                await putEntry({ id: makeId(), entryType: "memory", imageBlob: file, fileName: file.name || "huella-image", mimeType: file.type || "application/octet-stream", createdAt: now, dateKey: dateKeyFromTimestamp(now), addedAt: now, note: "", title: "", body: "", time: "" });
+            for (const [index, file] of pendingPhotos.entries()) {
+                const createdAt = started + index;
+                await putEntry({ id: makeId(), entryType: "memory", imageBlob: file, fileName: file.name || "huella-image", mimeType: file.type || "application/octet-stream", createdAt, dateKey: chosenDate, addedAt: createdAt, note, title: "", body: "", time: "" });
             }
+            closePhotoRegistration();
             await renderAlbum();
         } catch (error) { console.error(error); alert("写真を保存できませんでした。端末の空き容量を確認してください。"); }
-        finally { elements.addPhoto.disabled = false; elements.addPhoto.textContent = "写真を追加"; elements.fileInput.value = ""; }
+        finally { submit.disabled = false; submit.textContent = "Huellaへ保存"; }
     }
 
     async function savePhoto() {
         if (!currentPhoto) return;
         const key = elements.viewerDate.value || currentPhoto.dateKey;
-        await putEntry({ ...currentPhoto, note: elements.viewerNote.value.trim(), dateKey: key, createdAt: timestampFromKey(key, currentPhoto.createdAt), updatedAt: Date.now() });
+        await putEntry({ ...currentPhoto, note: elements.viewerNote.value.trim(), dateKey: key, createdAt: currentPhoto.createdAt, updatedAt: Date.now() });
         closePhoto(); await renderAlbum(); await renderCalendar();
     }
     async function removePhoto() {
@@ -403,7 +450,10 @@
     elements.albumTab?.addEventListener("click", () => switchMode("album"));
     elements.calendarTab?.addEventListener("click", () => switchMode("calendar"));
     elements.addPhoto?.addEventListener("click", () => elements.fileInput.click());
-    elements.fileInput?.addEventListener("change", event => addFiles(event.target.files));
+    elements.fileInput?.addEventListener("change", event => openPhotoRegistration(event.target.files));
+    elements.registerForm?.addEventListener("submit", savePhotoRegistration);
+    elements.registerClose?.addEventListener("click", closePhotoRegistration);
+    elements.registerCancel?.addEventListener("click", closePhotoRegistration);
     elements.viewerClose?.addEventListener("click", closePhoto);
     elements.viewerSave?.addEventListener("click", savePhoto);
     elements.viewerDelete?.addEventListener("click", removePhoto);
@@ -415,11 +465,12 @@
     elements.form?.addEventListener("submit", saveTextEntry);
     elements.entryDelete?.addEventListener("click", removeTextEntry);
     elements.overlay?.addEventListener("click", event => { if (event.target === elements.overlay) closeOverlay(); });
+    elements.register?.addEventListener("click", event => { if (event.target === elements.register) closePhotoRegistration(); });
     elements.viewer?.addEventListener("click", event => { if (event.target === elements.viewer) closePhoto(); });
     elements.editor?.addEventListener("click", event => { if (event.target === elements.editor) closeEditor(); });
     document.addEventListener("keydown", event => {
         if (event.key !== "Escape") return;
-        if (!elements.editor.hidden) closeEditor(); else if (!elements.viewer.hidden) closePhoto(); else if (!elements.overlay.hidden) closeOverlay();
+        if (!elements.register.hidden) closePhotoRegistration(); else if (!elements.editor.hidden) closeEditor(); else if (!elements.viewer.hidden) closePhoto(); else if (!elements.overlay.hidden) closeOverlay();
     });
 
     window.SendaHuella = {

@@ -4459,3 +4459,81 @@ body.onboarding-open {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Huella parity: pre-save photo details and legible journal records */
+.huella-photo-register-card {
+    width: min(520px, 100%);
+}
+
+.huella-register-preview {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    margin: 4px 0 18px;
+    overflow: hidden;
+    border: 1px solid rgba(202, 170, 101, 0.28);
+    border-radius: 14px;
+    background: rgba(3, 8, 4, 0.58);
+}
+
+.huella-register-preview img {
+    display: block;
+    width: 100%;
+    max-height: 38vh;
+    object-fit: contain;
+}
+
+.huella-register-preview span {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    max-width: calc(100% - 20px);
+    padding: 5px 9px;
+    overflow: hidden;
+    border: 1px solid rgba(214, 191, 119, 0.26);
+    border-radius: 999px;
+    color: #f1e5c4;
+    background: rgba(8, 15, 8, 0.82);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.huella-register-help {
+    margin: 10px 0 0;
+    color: rgba(227, 214, 178, 0.64);
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+#huellaCalendarPanel .huella-calendar-day,
+#huellaCalendarPanel .huella-calendar-day span {
+    color: #f2e5c2 !important;
+    opacity: 1 !important;
+}
+
+#huellaCalendarPanel .huella-calendar-day {
+    border-color: rgba(205, 181, 110, 0.30) !important;
+    background: linear-gradient(160deg, rgba(68, 82, 54, 0.96), rgba(36, 48, 31, 0.98)) !important;
+}
+
+#huellaCalendarPanel .huella-calendar-day.selected {
+    outline: 2px solid rgba(166, 143, 78, 0.82) !important;
+    background: linear-gradient(160deg, #596b45, #344229) !important;
+}
+
+#huellaCalendarPanel .huella-calendar-day.today span {
+    color: #fff1c4 !important;
+    font-weight: 700;
+}
+
+#huellaCalendarPanel .huella-day-entry-button .huella-entry-tag {
+    color: #e2bf75 !important;
+    font-weight: 700;
+}
+
+#huellaCalendarPanel .huella-day-entry-button time {
+    color: #ddcda7 !important;
+    opacity: 1;
+}

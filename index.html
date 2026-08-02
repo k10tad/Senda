@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
-    <link rel="stylesheet" href="style.css?v=25">
+    <link rel="stylesheet" href="style.css?v=26">
 <link rel="stylesheet" href="style-room-refresh.css?v=18">
 <link rel="stylesheet" href="style-dime.css?v=2">
 </head>
@@ -434,6 +434,25 @@
     </section>
 </div>
 
+<div id="huellaPhotoRegister" class="huella-entry-editor" hidden role="dialog" aria-modal="true" aria-labelledby="huellaPhotoRegisterTitle">
+    <form id="huellaPhotoRegisterForm" class="huella-entry-card huella-photo-register-card">
+        <button id="huellaPhotoRegisterClose" class="huella-viewer-close" type="button" aria-label="写真登録を閉じる">×</button>
+        <div class="huella-kicker">NEW MEMORY</div>
+        <h3 id="huellaPhotoRegisterTitle">写真をHuellaへ残す</h3>
+        <div class="huella-register-preview">
+            <img id="huellaPhotoRegisterPreview" alt="登録する写真">
+            <span id="huellaPhotoRegisterCount"></span>
+        </div>
+        <label><span>日付</span><input id="huellaPhotoRegisterDate" type="date" required></label>
+        <label><span>ひとこと</span><textarea id="huellaPhotoRegisterNote" maxlength="240" rows="4" placeholder="この日のこと、ひとことだけ残しとこ。"></textarea></label>
+        <p class="huella-register-help">複数枚を選んだ場合は、同じ日付とひとことを付けて保存します。</p>
+        <div class="huella-viewer-actions">
+            <button type="submit">Huellaへ保存</button>
+            <button id="huellaPhotoRegisterCancel" class="quiet-button" type="button">キャンセル</button>
+        </div>
+    </form>
+</div>
+
 <div id="huellaViewer" class="huella-viewer" hidden role="dialog" aria-modal="true" aria-label="Huellaの写真">
     <div class="huella-viewer-card">
         <button id="huellaViewerClose" class="huella-viewer-close" type="button" aria-label="写真を閉じる">×</button>
@@ -571,13 +590,13 @@
 <script src="js/companion-days.js?v=1"></script>
 <script src="js/birthday.js?v=2"></script>
 <script src="js/sant-jordi.js?v=5"></script>
-<script src="js/huella.js?v=4"></script>
+<script src="js/huella.js?v=5"></script>
 <script src="js/backup.js?v=2"></script>
 <script src="js/activity.js?v=3"></script>
 <script src="js/rhythm.js?v=2"></script>
 <script src="js/promise.js?v=2"></script>
 <script src="js/dime.js?v=2"></script>
-<script src="js/weekly-record.js?v=1"></script>
+<script src="js/weekly-record.js?v=2"></script>
 <script src="js/work-session.js?v=8"></script>
 <script src="js/tasks.js"></script>
 <script src="js/alarm.js?v=5"></script>
@@ -586,7 +605,7 @@
 <script src="js/memory.js"></script>
 <script src="js/weather.js?v=3"></script>
 <script src="js/clock.js?v=2"></script>
-<script src="js/navigation.js?v=4"></script>
+<script src="js/navigation.js?v=5"></script>
 <script src="js/companion-engine.js?v=5"></script>
 <script>window.USE_COMPANION_ENGINE=true;</script>
 <script src="js/main.js?v=8"></script>
