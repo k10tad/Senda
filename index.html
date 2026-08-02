@@ -15,7 +15,8 @@
     <link rel="apple-touch-icon-precomposed" href="./assets/icon/apple-touch-icon.png?v=4">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png?v=4">
     <link rel="stylesheet" href="style.css?v=25">
-<link rel="stylesheet" href="style-room-refresh.css?v=17">
+<link rel="stylesheet" href="style-room-refresh.css?v=18">
+<link rel="stylesheet" href="style-dime.css?v=1">
 </head>
 
 <body class="splash-active" data-senda-page="home">
@@ -103,7 +104,14 @@
 <section class="app-page active" id="homePage" data-page="home">
     <div class="senda-home">
         <section class="senda-presence" aria-label="Harry">
-            <img src="assets/companion-welcome.jpg" id="harry" alt="Harry">
+            <div class="senda-presence-visual">
+                <img src="assets/companion-welcome.jpg" id="harry" alt="Harry">
+                <button id="openDime" class="dime-launch" type="button" aria-label="Dimeを開く">
+                    <span class="dime-launch-copy"><strong>DIME</strong><small>話して</small></span>
+                    <span class="dime-olive" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="dime-shimmer" aria-hidden="true"></span>
+                </button>
+            </div>
             <div id="harryActivity" class="harry-activity" hidden aria-live="polite">
                 <span class="harry-activity-dot" aria-hidden="true"></span>
                 <span class="harry-activity-kicker">NOW</span>
@@ -501,6 +509,31 @@
     </section>
 </div>
 
+<div id="dimeOverlay" class="dime-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dimeTitle">
+    <section class="dime-card">
+        <header class="dime-contact">
+            <span class="dime-avatar" aria-hidden="true">H</span>
+            <div><strong id="dimeTitle">Dime</strong><small>HARRY · AHORA</small></div>
+            <button id="closeDime" class="dime-close" type="button" aria-label="Dimeを閉じる">×</button>
+        </header>
+        <div class="dime-tabs" role="tablist" aria-label="Dimeの表示切り替え">
+            <button id="dimeMessagesTab" type="button" role="tab" aria-selected="true" aria-controls="dimeMessagesPanel" data-dime-tab="messages">Mensajes</button>
+            <button id="dimePromisesTab" type="button" role="tab" aria-selected="false" aria-controls="dimePromisesPanel" data-dime-tab="promises">Promesas</button>
+        </div>
+        <section id="dimeMessagesPanel" class="dime-panel" role="tabpanel" aria-labelledby="dimeMessagesTab">
+            <div id="dimeThread" class="dime-thread" aria-live="polite"></div>
+            <form id="dimeForm" class="dime-composer">
+                <label class="sr-only" for="dimeInput">Harryへのメッセージ</label>
+                <textarea id="dimeInput" maxlength="500" rows="2" placeholder="入力中…"></textarea>
+                <button id="sendDime" type="submit">Enviar</button>
+            </form>
+        </section>
+        <section id="dimePromisesPanel" class="dime-panel" role="tabpanel" aria-labelledby="dimePromisesTab" hidden>
+            <div id="dimePromiseHistory" class="dime-promise-history"></div>
+        </section>
+    </section>
+</div>
+
 <div id="sendaWeeklyOverlay" class="senda-weekly-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="sendaWeeklyTitle">
     <section class="senda-weekly-card">
         <button id="closeSendaWeekly" class="senda-weekly-close" type="button" aria-label="一週間の記録を閉じる">×</button>
@@ -542,7 +575,8 @@
 <script src="js/backup.js?v=2"></script>
 <script src="js/activity.js?v=3"></script>
 <script src="js/rhythm.js?v=2"></script>
-<script src="js/promise.js?v=1"></script>
+<script src="js/promise.js?v=2"></script>
+<script src="js/dime.js?v=1"></script>
 <script src="js/weekly-record.js?v=1"></script>
 <script src="js/work-session.js?v=8"></script>
 <script src="js/tasks.js"></script>

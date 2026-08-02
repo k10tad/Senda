@@ -53,6 +53,7 @@
             delete state.days[key];
         });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        document.dispatchEvent(new CustomEvent("senda-promise-updated"));
     }
 
     function dateKey(date = new Date()) {
@@ -320,6 +321,10 @@
         openOffer,
         checkReturnPromise,
         fulfillSleep,
-        getToday: () => todayRecord()
+        getToday: () => todayRecord(),
+        getHistory: () => Object.values(state.days)
+            .filter(record => record && record.date)
+            .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+            .map(record => ({ ...record }))
     };
 })();

@@ -9,7 +9,7 @@ function getPressurePresentation(pressureValue) {
     if (pressureValue <= 1005) {
         return {
             level: "気圧：低め",
-            comment: "今日は無理をするな。静かに進めればいい。"
+            comment: "今日は低めやわ。無理せんとゆっくり進めや。"
         };
     }
 
@@ -17,15 +17,15 @@ function getPressurePresentation(pressureValue) {
         return {
             level: "気圧：高め",
             comment: isNight
-                ? "頭は冴えそうだ。だが夜更かしはほどほどにな。"
-                : "今日は調子が出そうだ。"
+                ? "今日は気圧高めやな、そんでも夜更かしはほどほどにな。"
+                : "今日は調子が出そうやな。"
         };
     }
 
     return {
         level: "気圧：安定",
         comment: isNight
-            ? "静かな夜だ。焦らず進めよう。"
+            ? "今日は気圧安定してるで。焦らず進めてこか。"
             : "いいペースで進めよう。"
     };
 }
