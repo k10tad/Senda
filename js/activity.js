@@ -45,8 +45,8 @@
             label: "気まぐれ演奏中",
             image: "assets/activity-guitar.jpg",
             duration: [55, 105],
-            // 音源が約2分あるため、途中で再開しない間隔にする。
-            soundDelay: [135, 190]
+            // 音源は約119秒。最後まで流れたあと、最低約26秒の静かな余白を置く。
+            soundDelay: [145, 210]
         }
     };
 
