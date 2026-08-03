@@ -32,6 +32,7 @@ const sendaAudio = {
     tool: new Audio("sound/tool.mp3"),
     whiskey: new Audio("sound/whiskey.mp3"),
     zipper: new Audio("sound/zipper.mp3"),
+    zippo: new Audio("sound/zippo.mp3"),
     shower: new Audio("sound/shower.mp3"),
     bathtub: new Audio("sound/bathtub.mp3"),
     guitar: new Audio("sound/harry_guitar.mp3"),
@@ -68,6 +69,8 @@ let sendaBgmDuckFactor = 1;
 let sendaBgmDuckFrame = null;
 let currentActivitySound = null;
 let lastGuitarTrack = null;
+let guitarPlaybackPhase = "";
+let pendingGuitarTrack = null;
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, Number(value) || 0));
@@ -96,6 +99,7 @@ function applySendaAudioSettings() {
     sendaAudio.tool.volume = living * 0.82;
     sendaAudio.whiskey.volume = living * 0.86;
     sendaAudio.zipper.volume = living * 0.58;
+    sendaAudio.zippo.volume = living * 0.92;
     sendaAudio.shower.volume = living;
     sendaAudio.bathtub.volume = living;
     sendaAudio.guitar.volume = clamp01(living * 1.05);
@@ -185,6 +189,8 @@ function stopAllAudioElements() {
     Object.values(sendaAudio).forEach(audio => stopAudio(audio));
     stopAudio(sendaActivityAudio);
     currentActivitySound = null;
+    guitarPlaybackPhase = "";
+    pendingGuitarTrack = null;
 }
 
 function syncBedroomHeartbeat() {
@@ -417,13 +423,15 @@ function playSendaActivitySound(activityName) {
             sendaAudio.card,
             sendaAudio.coin,
             sendaAudio.keys,
-            sendaAudio.dropped
+            sendaAudio.dropped,
+            sendaAudio.zippo
         ],
         reading: [
             sendaAudio.page,
             sendaAudio.page2,
             sendaAudio.munch,
-            sendaAudio.throat
+            sendaAudio.throat,
+            sendaAudio.zippo
         ],
         shower: [
             sendaAudio.shower,
@@ -433,7 +441,8 @@ function playSendaActivitySound(activityName) {
         drink: [
             sendaAudio.whiskey,
             sendaAudio.throat,
-            sendaAudio.keys
+            sendaAudio.keys,
+            sendaAudio.zippo
         ],
         maintenance: [
             sendaAudio.tool,
@@ -441,7 +450,8 @@ function playSendaActivitySound(activityName) {
             sendaAudio.rope,
             sendaAudio.zipper,
             sendaAudio.belt,
-            sendaAudio.breath
+            sendaAudio.breath,
+            sendaAudio.zippo
         ],
         guitar: [
             sendaAudio.guitar,
@@ -460,12 +470,17 @@ function playSendaActivitySound(activityName) {
         ? pool.filter(audio => audio !== lastGuitarTrack)
         : pool;
     const audio = candidates[Math.floor(Math.random() * candidates.length)];
-    if (activityName === "guitar") lastGuitarTrack = audio;
+    if (activityName === "guitar") {
+        lastGuitarTrack = audio;
+        pendingGuitarTrack = audio;
+        guitarPlaybackPhase = "zippo";
+    }
 
     applySendaAudioSettings();
     sendaActivityAudio.pause();
-    sendaActivityAudio.src = audio.currentSrc || audio.src;
-    sendaActivityAudio.volume = audio.volume;
+    const playbackAudio = activityName === "guitar" ? sendaAudio.zippo : audio;
+    sendaActivityAudio.src = playbackAudio.currentSrc || playbackAudio.src;
+    sendaActivityAudio.volume = playbackAudio.volume;
     currentActivitySound = activityName;
     try { sendaActivityAudio.currentTime = 0; } catch (_) {}
     safePlay(sendaActivityAudio);
@@ -483,13 +498,15 @@ function playSendaStaySound(activityName) {
             sendaAudio.card,
             sendaAudio.coin,
             sendaAudio.keys,
-            sendaAudio.dropped
+            sendaAudio.dropped,
+            sendaAudio.zippo
         ],
         reading: [
             sendaAudio.page,
             sendaAudio.page2,
             sendaAudio.munch,
-            sendaAudio.throat
+            sendaAudio.throat,
+            sendaAudio.zippo
         ],
         shower: [
             sendaAudio.shower,
@@ -499,7 +516,8 @@ function playSendaStaySound(activityName) {
         drink: [
             sendaAudio.whiskey,
             sendaAudio.throat,
-            sendaAudio.keys
+            sendaAudio.keys,
+            sendaAudio.zippo
         ],
         maintenance: [
             sendaAudio.tool,
@@ -507,7 +525,8 @@ function playSendaStaySound(activityName) {
             sendaAudio.rope,
             sendaAudio.zipper,
             sendaAudio.belt,
-            sendaAudio.breath
+            sendaAudio.breath,
+            sendaAudio.zippo
         ],
         guitar: [
             sendaAudio.guitar,
@@ -528,12 +547,17 @@ function playSendaStaySound(activityName) {
         ? pool.filter(audio => audio !== lastGuitarTrack)
         : pool;
     const audio = candidates[Math.floor(Math.random() * candidates.length)];
-    if (resolvedActivity === "guitar") lastGuitarTrack = audio;
+    if (resolvedActivity === "guitar") {
+        lastGuitarTrack = audio;
+        pendingGuitarTrack = audio;
+        guitarPlaybackPhase = "zippo";
+    }
 
     applySendaAudioSettings();
     sendaActivityAudio.pause();
-    sendaActivityAudio.src = audio.currentSrc || audio.src;
-    sendaActivityAudio.volume = audio.volume;
+    const playbackAudio = resolvedActivity === "guitar" ? sendaAudio.zippo : audio;
+    sendaActivityAudio.src = playbackAudio.currentSrc || playbackAudio.src;
+    sendaActivityAudio.volume = playbackAudio.volume;
     currentActivitySound = resolvedActivity;
     try { sendaActivityAudio.currentTime = 0; } catch (_) {}
     safePlay(sendaActivityAudio);
@@ -546,10 +570,35 @@ sendaActivityAudio.addEventListener("ended", function () {
         return;
     }
 
-    if (window.SendaActivity?.getCurrent?.() === "guitar") {
-        playSendaActivitySound("guitar");
-    } else {
+    if (window.SendaActivity?.getCurrent?.() !== "guitar") {
         currentActivitySound = null;
+        guitarPlaybackPhase = "";
+        pendingGuitarTrack = null;
+        return;
+    }
+
+    if (
+        audioMode !== "idle" ||
+        document.body.dataset.sendaPage !== "home" ||
+        window.SendaVoice?.isPlaying?.()
+    ) {
+        currentActivitySound = null;
+        guitarPlaybackPhase = "";
+        pendingGuitarTrack = null;
+        return;
+    }
+
+    if (guitarPlaybackPhase === "zippo" && pendingGuitarTrack) {
+        const guitarTrack = pendingGuitarTrack;
+        pendingGuitarTrack = null;
+        guitarPlaybackPhase = "track";
+        sendaActivityAudio.src = guitarTrack.currentSrc || guitarTrack.src;
+        sendaActivityAudio.volume = guitarTrack.volume;
+        try { sendaActivityAudio.currentTime = 0; } catch (_) {}
+        safePlay(sendaActivityAudio);
+    } else {
+        guitarPlaybackPhase = "";
+        playSendaActivitySound("guitar");
     }
 });
 
