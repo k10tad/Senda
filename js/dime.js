@@ -27,6 +27,7 @@
     };
 
     let state = loadState();
+    let editingId = "";
 
     function loadState() {
         try {
@@ -67,7 +68,18 @@
         const meta = document.createElement("small");
         if (message.side === "user") {
             meta.className = message.readAt ? "is-read" : "";
-            meta.textContent = `${message.readAt ? "✓✓ Leído" : "✓ Enviado"} · ${time(message.readAt || message.sentAt)}`;
+            meta.textContent = `${message.readAt ? "✓✓ Leído" : "✓ Enviado"} · ${time(message.updatedAt || message.readAt || message.sentAt)}`;
+
+            const edit = document.createElement("button");
+            edit.type = "button";
+            edit.textContent = "編集";
+            edit.addEventListener("click", () => beginEdit(message.id));
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.textContent = "削除";
+            remove.addEventListener("click", () => deleteMessage(message.id));
+            meta.append(edit, remove);
         } else {
             meta.textContent = `Harry · ${time(message.sentAt)}`;
         }
@@ -123,6 +135,45 @@
         saveState();
         renderMessages();
         window.setTimeout(() => markRead(message.id), 650);
+    }
+
+    function cancelEdit() {
+        editingId = "";
+        if (el.input) el.input.value = "";
+        if (el.send) el.send.textContent = "Enviar";
+    }
+
+    function beginEdit(messageId) {
+        const message = state.messages.find(item => item.id === messageId && item.side === "user");
+        if (!message || !el.input) return;
+        editingId = messageId;
+        el.input.value = message.text;
+        if (el.send) el.send.textContent = "Actualizar";
+        el.input.focus();
+        el.input.setSelectionRange(el.input.value.length, el.input.value.length);
+    }
+
+    function updateMessage(text) {
+        const message = state.messages.find(item => item.id === editingId && item.side === "user");
+        if (!message) {
+            cancelEdit();
+            return;
+        }
+        message.text = text;
+        message.updatedAt = new Date().toISOString();
+        saveState();
+        cancelEdit();
+        renderMessages();
+    }
+
+    function deleteMessage(messageId) {
+        if (!confirm("このメッセージを削除しますか？")) return;
+        state.messages = state.messages.filter(message => (
+            message.id !== messageId && message.replyTo !== messageId
+        ));
+        saveState();
+        if (editingId === messageId) cancelEdit();
+        renderMessages();
     }
 
     function promiseDate(value) {
@@ -215,6 +266,7 @@
             el.overlay.classList.remove("is-fallback-open");
         }
         document.body.classList.remove("dime-open");
+        cancelEdit();
     }
 
     function isDimeOpen() {
@@ -250,6 +302,11 @@
         event.preventDefault();
         const text = el.input?.value.trim();
         if (!text) return;
+        if (editingId) {
+            updateMessage(text);
+            el.input.focus();
+            return;
+        }
         el.input.value = "";
         sendMessage(text);
         el.input.focus();

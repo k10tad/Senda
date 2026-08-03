@@ -35,6 +35,8 @@ const sendaAudio = {
     shower: new Audio("sound/shower.mp3"),
     bathtub: new Audio("sound/bathtub.mp3"),
     guitar: new Audio("sound/harry_guitar.mp3"),
+    guitar2: new Audio("sound/harry_guitar2.mp3"),
+    guitar3: new Audio("sound/harry_guitar3.mp3"),
     sleepBreath: new Audio("sound/sleep-breath.mp3"),
     heartbeat: new Audio("sound/heartbeat.mp3"),
     alarm: new Audio("sound/alarm.mp3")
@@ -64,6 +66,8 @@ let lastLivingSound = null;
 let bedroomAmbienceEnabled = false;
 let sendaBgmDuckFactor = 1;
 let sendaBgmDuckFrame = null;
+let currentActivitySound = null;
+let lastGuitarTrack = null;
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, Number(value) || 0));
@@ -95,6 +99,8 @@ function applySendaAudioSettings() {
     sendaAudio.shower.volume = living;
     sendaAudio.bathtub.volume = living;
     sendaAudio.guitar.volume = clamp01(living * 1.05);
+    sendaAudio.guitar2.volume = clamp01(living * 1.05);
+    sendaAudio.guitar3.volume = clamp01(living * 1.05);
 
     // 睡眠音はSettingsに依存させず、コード側で固定する。
     sendaAudio.sleepBreath.volume = SENDA_FIXED_SLEEP_VOLUME;
@@ -178,6 +184,7 @@ function clearAudioTimers() {
 function stopAllAudioElements() {
     Object.values(sendaAudio).forEach(audio => stopAudio(audio));
     stopAudio(sendaActivityAudio);
+    currentActivitySound = null;
 }
 
 function syncBedroomHeartbeat() {
@@ -437,17 +444,29 @@ function playSendaActivitySound(activityName) {
             sendaAudio.breath
         ],
         guitar: [
-            sendaAudio.guitar
+            sendaAudio.guitar,
+            sendaAudio.guitar2,
+            sendaAudio.guitar3
         ]
     };
     const pool = pools[activityName];
     if (!pool || !pool.length) return false;
 
-    const audio = pool[Math.floor(Math.random() * pool.length)];
+    if (activityName === "guitar" && currentActivitySound === "guitar" && !sendaActivityAudio.paused) {
+        return true;
+    }
+
+    const candidates = activityName === "guitar" && pool.length > 1
+        ? pool.filter(audio => audio !== lastGuitarTrack)
+        : pool;
+    const audio = candidates[Math.floor(Math.random() * candidates.length)];
+    if (activityName === "guitar") lastGuitarTrack = audio;
+
     applySendaAudioSettings();
     sendaActivityAudio.pause();
     sendaActivityAudio.src = audio.currentSrc || audio.src;
     sendaActivityAudio.volume = audio.volume;
+    currentActivitySound = activityName;
     try { sendaActivityAudio.currentTime = 0; } catch (_) {}
     safePlay(sendaActivityAudio);
     return true;
@@ -491,7 +510,9 @@ function playSendaStaySound(activityName) {
             sendaAudio.breath
         ],
         guitar: [
-            sendaAudio.guitar
+            sendaAudio.guitar,
+            sendaAudio.guitar2,
+            sendaAudio.guitar3
         ]
     };
     const resolvedActivity =
@@ -499,15 +520,38 @@ function playSendaStaySound(activityName) {
         window.SendaActivity?.getCurrent?.() ||
         "reading";
     const pool = pools[resolvedActivity] || pools.reading;
-    const audio = pool[Math.floor(Math.random() * pool.length)];
+    if (resolvedActivity === "guitar" && currentActivitySound === "guitar" && !sendaActivityAudio.paused) {
+        return true;
+    }
+
+    const candidates = resolvedActivity === "guitar" && pool.length > 1
+        ? pool.filter(audio => audio !== lastGuitarTrack)
+        : pool;
+    const audio = candidates[Math.floor(Math.random() * candidates.length)];
+    if (resolvedActivity === "guitar") lastGuitarTrack = audio;
+
     applySendaAudioSettings();
     sendaActivityAudio.pause();
     sendaActivityAudio.src = audio.currentSrc || audio.src;
     sendaActivityAudio.volume = audio.volume;
+    currentActivitySound = resolvedActivity;
     try { sendaActivityAudio.currentTime = 0; } catch (_) {}
     safePlay(sendaActivityAudio);
     return true;
 }
+
+sendaActivityAudio.addEventListener("ended", function () {
+    if (currentActivitySound !== "guitar") {
+        currentActivitySound = null;
+        return;
+    }
+
+    if (window.SendaActivity?.getCurrent?.() === "guitar") {
+        playSendaActivitySound("guitar");
+    } else {
+        currentActivitySound = null;
+    }
+});
 
 document.addEventListener("pointerdown", unlockAudio, {
     once: true,
