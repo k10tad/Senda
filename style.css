@@ -1,3 +1,16 @@
+
+/* Harry handwriting font: place fonts/Enkasokkifont.ttf in the project. */
+@font-face {
+    font-family: "Enka Sokki";
+    src: url("fonts/Enkasokkifont.ttf") format("truetype");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+}
+
+:root {
+    --harry-handwriting-font: "Enka Sokki", "Yu Mincho", "Hiragino Mincho ProN", serif;
+}
 body {
     margin: 0;
     min-height: 100vh;
@@ -4536,4 +4549,22 @@ body.onboarding-open {
 #huellaCalendarPanel .huella-day-entry-button time {
     color: #ddcda7 !important;
     opacity: 1;
+}
+
+
+/* Harryが書いた文字だけを本人の筆跡にする。UIと台詞表示は変更しない。 */
+.huella-entry-diary .huella-day-entry-button strong,
+.huella-entry-diary > p,
+.huella-harry-comment,
+#huellaEntryBody,
+#huellaViewerNote {
+    font-family: var(--harry-handwriting-font);
+    font-weight: 400;
+    letter-spacing: 0.035em;
+}
+
+.huella-entry-diary > p,
+.huella-harry-comment {
+    font-size: 1.08em;
+    line-height: 1.85;
 }

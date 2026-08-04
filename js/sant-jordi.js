@@ -133,9 +133,9 @@
       .senda-jordi-year{color:#c8a967;letter-spacing:.17em}
       .senda-jordi-title{margin:13px 0 8px;font:500 1.18rem/1.75 Georgia,serif}
       .senda-jordi-flower{color:#d7c6bc}
-      .senda-jordi-note{margin:23px 0 4px;padding-top:20px;border-top:1px solid rgba(218,204,169,.17);font:italic 1rem/1.8 Georgia,serif}
-      .senda-jordi-note-ja{margin:0;color:#cec9ba;line-height:1.8}
-      .senda-jordi-reason{margin:19px 0 0;color:#aaa998;font-size:.9rem;line-height:1.75}
+      .senda-jordi-note{margin:23px 0 4px;padding-top:20px;border-top:1px solid rgba(218,204,169,.17);font-family:var(--harry-handwriting-font,Georgia,serif);font-size:1.08rem;font-style:normal;line-height:1.9;letter-spacing:.035em}
+      .senda-jordi-note-ja{margin:0;color:#cec9ba;font-family:var(--harry-handwriting-font,Georgia,serif);font-size:1.04rem;line-height:1.9;letter-spacing:.035em}
+      .senda-jordi-reason{margin:19px 0 0;color:#aaa998;font-family:var(--harry-handwriting-font,Georgia,serif);font-size:1rem;line-height:1.85;letter-spacing:.025em}
       .senda-jordi-history-title{margin:27px 0 11px;color:#c8a967;letter-spacing:.16em;font-size:.76rem}
       .senda-jordi-history{display:grid;gap:9px}
       .senda-jordi-history button{width:100%;padding:13px 15px;text-align:left;border:1px solid rgba(196,164,91,.22);border-radius:9px;background:rgba(31,46,24,.65);color:#eee6d4;font:inherit;line-height:1.55}
